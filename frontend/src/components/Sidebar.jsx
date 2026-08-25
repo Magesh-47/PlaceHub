@@ -33,7 +33,7 @@ const Sidebar = ({ open, onClose }) => {
         {/* Logo */}
         <div className="sidebar-logo">
           <div className="sidebar-logo-icon">SP</div>
-          <span className="sidebar-logo-text">Placement Hub</span>
+          <span className="sidebar-logo-text">PlaceHub</span>
         </div>
 
         {/* Nav */}
@@ -57,7 +57,7 @@ const Sidebar = ({ open, onClose }) => {
         {/* Footer */}
         <div className="sidebar-footer">
           <p className="sidebar-footer-text">
-            Student Placement Hub · v1.0
+            PlaceHub · v1.0
           </p>
         </div>
       </aside>

@@ -42,7 +42,7 @@ const Login = () => {
       <div className="login-brand">
         <div className="login-brand-logo">SP</div>
 
-        <h1 className="login-brand-title">Student Placement Hub</h1>
+        <h1 className="login-brand-title">PlaceHub</h1>
         <p className="login-brand-tagline">
           Empowering careers, one placement at a time.
         </p>
@@ -125,7 +125,7 @@ const Login = () => {
           </form>
 
           <p style={{ marginTop: '2rem', fontSize: '0.8rem', color: 'var(--text-muted)', textAlign: 'center' }}>
-            Student Placement Hub · {new Date().getFullYear()}
+            PlaceHub · {new Date().getFullYear()}
           </p>
         </div>
       </div>
