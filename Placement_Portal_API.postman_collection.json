@@ -1,0 +1,669 @@
+{
+    "info": {
+        "name": "Placement Portal API",
+        "description": "Complete API collection for Placement Portal Backend",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:8080",
+            "type": "string"
+        },
+        {
+            "key": "adminToken",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "studentToken",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "jobId",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "Authentication",
+            "item": [
+                {
+                    "name": "Admin Login",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "var jsonData = pm.response.json();",
+                                    "pm.collectionVariables.set(\"adminToken\", jsonData.token);"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/auth/login",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "login"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Student Login",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "var jsonData = pm.response.json();",
+                                    "pm.collectionVariables.set(\"studentToken\", jsonData.token);"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"username\": \"student1\",\n  \"password\": \"pass123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/auth/login",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "login"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Admin - Student Management",
+            "item": [
+                {
+                    "name": "Create Student",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{adminToken}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"username\": \"student1\",\n  \"password\": \"pass123\",\n  \"fullName\": \"Alice Johnson\",\n  \"email\": \"alice@test.com\",\n  \"department\": \"Computer Science\",\n  \"year\": 3,\n  \"phone\": \"9876543210\",\n  \"cgpa\": 8.5\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/admin/students",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "students"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get All Students",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{adminToken}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/admin/students?page=0&size=10",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "students"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "0"
+                                },
+                                {
+                                    "key": "size",
+                                    "value": "10"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Student By ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{adminToken}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/admin/students/2",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "students",
+                                "2"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Student",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{adminToken}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"username\": \"student1\",\n  \"password\": \"pass123\",\n  \"fullName\": \"Alice Johnson Updated\",\n  \"email\": \"alice@test.com\",\n  \"department\": \"Information Technology\",\n  \"year\": 4,\n  \"phone\": \"9876543210\",\n  \"cgpa\": 9.0\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/admin/students/2",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "students",
+                                "2"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Student",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{adminToken}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/admin/students/2",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "students",
+                                "2"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Admin - Job Management",
+            "item": [
+                {
+                    "name": "Create Job with Custom Fields",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 201) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.collectionVariables.set(\"jobId\", jsonData.id);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{adminToken}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"companyName\": \"Google\",\n  \"jobRole\": \"Software Developer\",\n  \"description\": \"Exciting opportunity for software engineers\",\n  \"eligibilityCriteria\": \"CGPA >= 7.5\",\n  \"location\": \"Bangalore\",\n  \"salaryPackage\": \"18 LPA\",\n  \"applicationDeadline\": \"2026-03-31\",\n  \"isActive\": true,\n  \"customFields\": [\n    {\n      \"fieldName\": \"Resume URL\",\n      \"fieldType\": \"URL\",\n      \"isRequired\": true,\n      \"displayOrder\": 0\n    },\n    {\n      \"fieldName\": \"GitHub Profile\",\n      \"fieldType\": \"URL\",\n      \"isRequired\": false,\n      \"displayOrder\": 1\n    },\n    {\n      \"fieldName\": \"Why Google?\",\n      \"fieldType\": \"TEXTAREA\",\n      \"isRequired\": true,\n      \"displayOrder\": 2\n    }\n  ]\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/admin/jobs",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "jobs"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get All Jobs",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{adminToken}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/admin/jobs?page=0&size=10",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "jobs"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "0"
+                                },
+                                {
+                                    "key": "size",
+                                    "value": "10"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Job By ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{adminToken}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/admin/jobs/{{jobId}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "jobs",
+                                "{{jobId}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Job",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{adminToken}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"companyName\": \"Google Inc.\",\n  \"jobRole\": \"Senior Software Developer\",\n  \"description\": \"Updated description\",\n  \"eligibilityCriteria\": \"CGPA >= 8.0\",\n  \"location\": \"Mumbai\",\n  \"salaryPackage\": \"20 LPA\",\n  \"applicationDeadline\": \"2026-04-30\",\n  \"isActive\": true,\n  \"customFields\": [\n    {\n      \"fieldName\": \"Resume URL\",\n      \"fieldType\": \"URL\",\n      \"isRequired\": true,\n      \"displayOrder\": 0\n    }\n  ]\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/admin/jobs/{{jobId}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "jobs",
+                                "{{jobId}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Job",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{adminToken}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/admin/jobs/{{jobId}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "jobs",
+                                "{{jobId}}"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Admin - Application Management",
+            "item": [
+                {
+                    "name": "Get Applications By Job",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{adminToken}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/admin/applications/job/{{jobId}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "applications",
+                                "job",
+                                "{{jobId}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Export Applications CSV",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{adminToken}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/admin/applications/export/{{jobId}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "applications",
+                                "export",
+                                "{{jobId}}"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Student - Profile",
+            "item": [
+                {
+                    "name": "Get Own Profile",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{studentToken}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/student/profile",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "student",
+                                "profile"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Own Profile",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{studentToken}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"username\": \"student1\",\n  \"password\": \"\",\n  \"fullName\": \"Alice Johnson\",\n  \"email\": \"alice@test.com\",\n  \"department\": \"Computer Science\",\n  \"year\": 4,\n  \"phone\": \"9876543211\",\n  \"cgpa\": 8.8\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/student/profile",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "student",
+                                "profile"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Student - Jobs",
+            "item": [
+                {
+                    "name": "Get Active Jobs",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{studentToken}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/student/jobs?page=0&size=10",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "student",
+                                "jobs"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "0"
+                                },
+                                {
+                                    "key": "size",
+                                    "value": "10"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Job Details",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{studentToken}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/student/jobs/{{jobId}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "student",
+                                "jobs",
+                                "{{jobId}}"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Student - Applications",
+            "item": [
+                {
+                    "name": "Apply for Job",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{studentToken}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"jobId\": {{jobId}},\n  \"fieldValues\": {\n    \"Resume URL\": \"https://drive.google.com/myresume\",\n    \"GitHub Profile\": \"https://github.com/alice\",\n    \"Why Google?\": \"I am passionate about technology and innovation...\"\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/student/applications",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "student",
+                                "applications"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get My Applications",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{studentToken}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/student/applications",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "student",
+                                "applications"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,52 @@
+package com.placement.portal.entity;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "student_profiles")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class StudentProfile {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String fullName;
+
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Column(nullable = false)
+    private String department;
+
+    @Column(nullable = false, name = "study_year")
+    private Integer year;
+
+    @Column(nullable = false)
+    private String phone;
+
+    @Column(nullable = false)
+    private Double cgpa;
+
+    @Column
+    private java.time.LocalDate dateOfBirth;
+
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    @JsonIgnore
+    private User user;
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<JobApplication> applications = new ArrayList<>();
+}
