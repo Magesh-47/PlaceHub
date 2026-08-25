@@ -1,0 +1,15 @@
+# Maven build output
+target/
+
+# Bundled Maven install (kept on disk — it is the only Maven on this machine)
+apache-maven-3.9.5/
+maven.zip
+
+# Logs
+*.log
+
+# IDE
+.idea/
+
+# Captured auth tokens — never commit these
+*_token.txt
