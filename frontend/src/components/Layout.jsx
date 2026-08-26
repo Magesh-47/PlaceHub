@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Navigate, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -6,7 +6,7 @@ import api from '../services/api';
 import { toast } from 'react-toastify';
 import Sidebar from './Sidebar';
 import { MdLightMode, MdDarkMode } from 'react-icons/md';
-import { FiLogOut, FiKey, FiMenu } from 'react-icons/fi';
+import { FiLogOut, FiKey, FiMenu, FiX } from 'react-icons/fi';
 
 /* ─── Layout ─────────────────────────────────────────────── */
 const Layout = () => {
@@ -14,7 +14,42 @@ const Layout = () => {
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
+  const MOBILE_Q = '(max-width: 768px)';
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => window.matchMedia(MOBILE_Q).matches);
+  const [collapsed, setCollapsed] = useState(
+    () => localStorage.getItem('sidebarCollapsed') === '1'
+  );
+
+  // keep isMobile in sync; leaving mobile must also close the drawer
+  useEffect(() => {
+    const mq = window.matchMedia(MOBILE_Q);
+    const onChange = (e) => {
+      setIsMobile(e.matches);
+      if (!e.matches) setSidebarOpen(false);
+    };
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('sidebarCollapsed', collapsed ? '1' : '0');
+  }, [collapsed]);
+
+  // Escape closes the mobile drawer
+  useEffect(() => {
+    if (!sidebarOpen) return;
+    const onKey = (e) => { if (e.key === 'Escape') setSidebarOpen(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [sidebarOpen]);
+
+  // one button, two jobs: drawer on mobile, collapse on desktop
+  const toggleMenu = useCallback(() => {
+    if (isMobile) setSidebarOpen((o) => !o);
+    else setCollapsed((c) => !c);
+  }, [isMobile]);
   const [showPwModal, setShowPwModal] = useState(false);
   const [pwData, setPwData] = useState({ currentPassword: '', newPassword: '', otp: '' });
   const [otpSent, setOtpSent] = useState(false);
@@ -66,7 +101,7 @@ const Layout = () => {
   return (
     <div className="app-shell">
       {/* ── Sidebar ── */}
-      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <Sidebar open={sidebarOpen} collapsed={!isMobile && collapsed} onClose={() => setSidebarOpen(false)} />
 
       {/* ── Main area ── */}
       <div className="main-area">
@@ -75,10 +110,17 @@ const Layout = () => {
         <header className="topbar">
           <button
             className="icon-btn hamburger-btn"
-            onClick={() => setSidebarOpen(true)}
-            title="Open menu"
+            onClick={toggleMenu}
+            aria-label={isMobile
+              ? (sidebarOpen ? 'Close menu' : 'Open menu')
+              : (collapsed ? 'Expand sidebar' : 'Collapse sidebar')}
+            aria-expanded={isMobile ? sidebarOpen : !collapsed}
+            aria-controls="app-sidebar"
+            title={isMobile
+              ? (sidebarOpen ? 'Close menu' : 'Open menu')
+              : (collapsed ? 'Expand sidebar' : 'Collapse sidebar')}
           >
-            <FiMenu size={20} />
+            {isMobile && sidebarOpen ? <FiX size={20} /> : <FiMenu size={20} />}
           </button>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>

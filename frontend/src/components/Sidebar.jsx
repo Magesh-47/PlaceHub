@@ -20,7 +20,7 @@ const studentLinks = [
   { to: '/student/my-applications', icon: <FaClipboardList />,  label: 'My Applications' },
 ];
 
-const Sidebar = ({ open, onClose }) => {
+const Sidebar = ({ open, collapsed, onClose }) => {
   const { user } = useAuth();
   const links = user?.role === 'ADMIN' ? adminLinks : studentLinks;
   const roleLabel = user?.role === 'ADMIN' ? 'Administrator' : 'Student';
@@ -29,7 +29,10 @@ const Sidebar = ({ open, onClose }) => {
     <>
       {open && <div className="sidebar-overlay" onClick={onClose} />}
 
-      <aside className={`sidebar${open ? ' open' : ''}`}>
+      <aside
+        id="app-sidebar"
+        className={`sidebar${open ? ' open' : ''}${collapsed ? ' collapsed' : ''}`}
+      >
         {/* Logo */}
         <div className="sidebar-logo">
           <div className="sidebar-logo-icon">PH</div>
@@ -47,9 +50,10 @@ const Sidebar = ({ open, onClose }) => {
                 `sidebar-nav-link${isActive ? ' active' : ''}`
               }
               onClick={onClose}
+              title={collapsed ? link.label : undefined}
             >
               <span className="sidebar-nav-icon">{link.icon}</span>
-              <span>{link.label}</span>
+              <span className="sidebar-nav-label">{link.label}</span>
             </NavLink>
           ))}
         </nav>
