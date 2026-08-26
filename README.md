@@ -49,7 +49,7 @@ The application is intended to use a **persistent PostgreSQL database**. The def
    ```sql
    CREATE DATABASE placement_portal;
    ```
-3. Update the credentials in `src/main/resources/application.properties` with your PostgreSQL username/password (the URL is already set to `jdbc:postgresql://localhost:5432/placement_portal`).
+3. Update the credentials in `backend/src/main/resources/application.properties` with your PostgreSQL username/password (the URL is already set to `jdbc:postgresql://localhost:5432/placement_portal`).
 
 > **Note:** earlier versions used an in‑memory H2 instance (`jdbc:h2:mem:placement_portal`) for development/testing. That configuration is now commented out in `application.properties`. If you only need a transient DB for experiments, you can re-enable the H2 block temporarily.
 
@@ -74,6 +74,7 @@ spring.mail.password=your-app-password
 ### Option 1: Using Maven
 
 ```bash
+cd backend
 mvn clean install
 mvn spring-boot:run
 ```
@@ -81,9 +82,12 @@ mvn spring-boot:run
 ### Option 2: Using Maven Wrapper (if available)
 
 ```bash
-./mvnw clean install
-./mvnw spring-boot:run
+cd backend
+./mvnw.cmd clean install
+./mvnw.cmd spring-boot:run
 ```
+
+> Only `mvnw.cmd` (Windows) is present — there is no POSIX `mvnw` script.
 
 ### Option 3: Using IDE
 
@@ -236,10 +240,40 @@ curl -X POST http://localhost:8080/api/student/applications \
   }'
 ```
 
+## Repository Layout
+
+```
+placementportal/
+├── backend/        # Spring Boot API (pom.xml, src/, mvnw.cmd, .mvn/)
+├── frontend/       # React + Vite SPA
+├── docs/           # API guide, DB design, report, Postman collection
+├── scripts/        # PowerShell API test/verify scripts
+└── README.md
+```
+
+Frontend source is organised as:
+
+```
+frontend/src/
+├── main.jsx
+├── App.jsx              # routes + providers
+├── components/          # Layout, Sidebar, Loader, PageHeader, …
+├── context/             # AuthContext, ThemeContext
+├── pages/
+│   ├── auth/            # Login
+│   ├── admin/           # Dashboard, Students, Jobs, Applications
+│   └── student/         # Dashboard, Jobs, Profile, Applications
+├── services/            # axios client
+└── styles/              # index.css entry + 8 per-concern modules
+```
+
+> `styles/index.css` is an import manifest only. CSS is order-dependent, so
+> keep the `@import` order as written: tokens first, responsive last.
+
 ## Project Structure
 
 ```
-src/main/java/com/placement/portal/
+backend/src/main/java/com/placement/portal/
 ├── PlacementPortalApplication.java     # Main application class
 ├── config/
 │   ├── SecurityConfig.java             # Spring Security configuration

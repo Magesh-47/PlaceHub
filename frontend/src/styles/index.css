@@ -1,0 +1,19 @@
+/* ─────────────────────────────────────────────
+   Stylesheet entry point
+
+   CSS is order-dependent: later rules win ties on
+   specificity. Keep these imports in this order —
+   tokens must define the custom properties before
+   anything reads them, and responsive overrides
+   must come last to win over the base rules.
+   ───────────────────────────────────────────── */
+
+@import './tokens.css';      /* :root custom properties + dark theme */
+@import './base.css';        /* reset, html/body, element defaults */
+@import './layout.css';      /* app shell, sidebar, topbar, page content */
+@import './components.css';  /* page header, badges, cards, buttons, forms,
+                                tables, pagination, modals, empty, skeleton */
+@import './login.css';       /* login — dark glass */
+@import './dashboard.css';   /* admin dashboard — stats, panels, bars */
+@import './utilities.css';   /* helpers + animations */
+@import './responsive.css';  /* global breakpoints — must stay last */

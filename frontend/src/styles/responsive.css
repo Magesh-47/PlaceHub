@@ -1,0 +1,31 @@
+/* ─────────────────────────────────────────────
+   Responsive
+   ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .login-brand { display: none; }
+
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    transform: translateX(-100%);
+    z-index: 200;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar-overlay { display: block; }
+
+
+  .page-content { padding: 1.25rem 1rem; }
+
+  .topbar { padding: 0 1rem; }
+}
+
+@media (max-width: 480px) {
+  .page-header { flex-direction: column; align-items: flex-start; }
+  .filter-strip { flex-direction: column; }
+}

@@ -1,7 +1,7 @@
 # Maven build output
-target/
+backend/target/
 
-# Bundled Maven install (kept on disk — it is the only Maven on this machine)
+# Bundled Maven toolchain (kept on disk — it is the only Maven on this machine)
 apache-maven-3.9.5/
 maven.zip
 

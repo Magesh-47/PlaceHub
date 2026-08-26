@@ -1,0 +1,71 @@
+/* ─────────────────────────────────────────────
+   Design Tokens — Light Theme
+   ───────────────────────────────────────────── */
+:root {
+  --primary-color:   #6366f1;
+  --primary-hover:   #4f46e5;
+  --primary-light:   rgba(99, 102, 241, 0.08);
+  --primary-mid:     rgba(99, 102, 241, 0.15);
+  --primary-glow:    rgba(99, 102, 241, 0.32);
+  --grad-primary:    linear-gradient(135deg, #6366f1, #8b5cf6 52%, #7c3aed);
+
+  --secondary-color: #475569;
+
+  --bg-body:    #f6f8fc;
+  --bg-card:    #ffffff;
+  --bg-sidebar: #ffffff;
+  --bg-topbar:  #ffffff;
+  --bg-input:   #ffffff;
+
+  --text-main:    #0f172a;
+  --text-muted:   #64748b;
+  --text-inverse: #ffffff;
+
+  --border-color: #e4e9f2;
+  --input-focus:  #6366f1;
+
+  --success: #10b981;
+  --danger:  #ef4444;
+  --warning: #f59e0b;
+  --info:    #3b82f6;
+
+  /* cool-tinted, layered — reads softer than neutral black */
+  --shadow-xs: 0 1px 2px 0 rgb(15 23 42 / 0.05);
+  --shadow-sm: 0 1px 3px 0 rgb(15 23 42 / 0.07), 0 1px 2px -1px rgb(15 23 42 / 0.06);
+  --shadow-md: 0 4px 10px -2px rgb(15 23 42 / 0.08), 0 2px 5px -3px rgb(15 23 42 / 0.07);
+  --shadow-lg: 0 16px 32px -8px rgb(15 23 42 / 0.12), 0 6px 12px -6px rgb(15 23 42 / 0.08);
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 0.875rem;
+  --radius-xl: 1.25rem;
+
+  --sidebar-w: 240px;
+  --topbar-h:  60px;
+
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─────────────────────────────────────────────
+   Dark Theme Overrides
+   ───────────────────────────────────────────── */
+[data-theme='dark'] {
+  --bg-body:    #080b16;
+  --bg-card:    #121a2c;
+  --bg-sidebar: #0d1424;
+  --bg-topbar:  #0d1424;
+  --bg-input:   #1a2438;
+
+  --text-main:  #f1f5f9;
+  --text-muted: #94a3b8;
+
+  --border-color: #253148;
+  --primary-light: rgba(99, 102, 241, 0.16);
+  --primary-mid:   rgba(99, 102, 241, 0.26);
+
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.35);
+  --shadow-md: 0 4px 12px -2px rgb(0 0 0 / 0.45), 0 2px 6px -3px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 18px 38px -10px rgb(0 0 0 / 0.6), 0 8px 16px -8px rgb(0 0 0 / 0.45);
+}
+
