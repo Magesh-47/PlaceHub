@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   FaTachometerAlt, FaUserGraduate, FaBriefcase,
-  FaFileAlt, FaSearch, FaUser, FaClipboardList
+  FaFileAlt, FaSearch, FaUser, FaClipboardList, FaFileExport
 } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 
@@ -11,6 +11,7 @@ const adminLinks = [
   { to: '/admin/students',     icon: <FaUserGraduate />,  label: 'Students'     },
   { to: '/admin/jobs',         icon: <FaBriefcase />,     label: 'Jobs'         },
   { to: '/admin/applications', icon: <FaFileAlt />,       label: 'Applications' },
+  { to: '/admin/reports',      icon: <FaFileExport />,    label: 'Reports'      },
 ];
 
 const studentLinks = [

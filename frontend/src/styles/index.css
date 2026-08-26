@@ -15,5 +15,6 @@
                                 tables, pagination, modals, empty, skeleton */
 @import './login.css';       /* login — dark glass */
 @import './dashboard.css';   /* admin dashboard — stats, panels, bars */
+@import './reports.css';     /* reports — export cards */
 @import './utilities.css';   /* helpers + animations */
 @import './responsive.css';  /* global breakpoints — must stay last */

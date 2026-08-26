@@ -7,6 +7,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminStudents from './pages/admin/Students';
 import AdminJobs from './pages/admin/Jobs';
 import AdminApplications from './pages/admin/Applications';
+import AdminReports from './pages/admin/Reports';
 import StudentDashboard from './pages/student/StudentDashboard';
 import StudentJobs from './pages/student/Jobs';
 import StudentProfile from './pages/student/Profile';
@@ -31,6 +32,7 @@ function App() {
             <Route path="/admin/students" element={<AdminStudents />} />
             <Route path="/admin/jobs" element={<AdminJobs />} />
             <Route path="/admin/applications" element={<AdminApplications />} />
+            <Route path="/admin/reports" element={<AdminReports />} />
           </Route>
 
           {/* Student Routes */}
