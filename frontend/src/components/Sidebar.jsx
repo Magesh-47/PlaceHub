@@ -32,7 +32,7 @@ const Sidebar = ({ open, onClose }) => {
       <aside className={`sidebar${open ? ' open' : ''}`}>
         {/* Logo */}
         <div className="sidebar-logo">
-          <div className="sidebar-logo-icon">SP</div>
+          <div className="sidebar-logo-icon">PH</div>
           <span className="sidebar-logo-text">PlaceHub</span>
         </div>
 

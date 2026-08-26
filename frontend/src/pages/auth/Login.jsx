@@ -1,16 +1,10 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { useTheme } from '../../context/ThemeContext';
 import { toast } from 'react-toastify';
-import { MdLightMode, MdDarkMode } from 'react-icons/md';
-import { FiUser, FiLock } from 'react-icons/fi';
+import { FiUser, FiLock, FiArrowRight, FiAlertCircle } from 'react-icons/fi';
 
-const features = [
-  'Browse & apply for job openings',
-  'Track your application status',
-  'Admin-managed recruitment drives',
-];
+const highlights = ['Browse roles', 'Track status', 'Admin-managed'];
 
 const Login = () => {
   const [formData, setFormData] = useState({ username: '', password: '' });
@@ -18,7 +12,6 @@ const Login = () => {
   const [submitting, setSubmitting] = useState(false);
 
   const { login } = useAuth();
-  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -38,97 +31,80 @@ const Login = () => {
 
   return (
     <div className="login-shell">
-      {/* ── Brand panel ── */}
-      <div className="login-brand">
-        <div className="login-brand-logo">SP</div>
+      <div className="login-orb login-orb-1" aria-hidden="true" />
+      <div className="login-orb login-orb-2" aria-hidden="true" />
 
-        <h1 className="login-brand-title">PlaceHub</h1>
-        <p className="login-brand-tagline">
-          Empowering careers, one placement at a time.
-        </p>
+      <div className="login-card">
+        {/* ── brand ── */}
+        <div className="login-brandbar">
+          <div className="login-mark" aria-hidden="true">PH</div>
+          <div>
+            <span className="login-wordmark">PlaceHub</span>
+            <span className="login-eyebrow">Placement Portal</span>
+          </div>
+        </div>
 
-        <div style={{ width: '100%', maxWidth: 280 }}>
-          {features.map((f) => (
-            <div key={f} className="login-brand-feature">
-              <div className="login-brand-feature-dot" />
-              {f}
+        <h1 className="login-heading">Welcome back</h1>
+        <p className="login-sub">Sign in with your portal credentials to continue.</p>
+
+        {error && (
+          <div className="login-error" role="alert">
+            <FiAlertCircle size={15} />
+            <span>{error}</span>
+          </div>
+        )}
+
+        <form className="login-form" onSubmit={handleSubmit}>
+          <div className="login-field">
+            <label className="login-label" htmlFor="username">Username</label>
+            <div className="login-input-wrap">
+              <FiUser size={15} />
+              <input
+                id="username"
+                type="text"
+                placeholder="Enter your username"
+                value={formData.username}
+                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                required
+                autoFocus
+                autoComplete="username"
+              />
             </div>
+          </div>
+
+          <div className="login-field">
+            <label className="login-label" htmlFor="password">Password</label>
+            <div className="login-input-wrap">
+              <FiLock size={15} />
+              <input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                required
+                autoComplete="current-password"
+              />
+            </div>
+          </div>
+
+          <button type="submit" className="login-submit" disabled={submitting}>
+            {submitting ? 'Signing in…' : 'Sign In'}
+            {!submitting && <FiArrowRight className="login-submit-arrow" size={16} />}
+          </button>
+        </form>
+
+        <div className="login-meta">
+          {highlights.map((h) => (
+            <span className="login-meta-item" key={h}>
+              <span className="login-meta-dot" aria-hidden="true" />
+              {h}
+            </span>
           ))}
         </div>
       </div>
 
-      {/* ── Form panel ── */}
-      <div className="login-form-panel">
-        <div className="login-form-inner animate-fade-in">
-          {/* Theme toggle */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1.5rem' }}>
-            <button
-              onClick={toggleTheme}
-              className="icon-btn"
-              title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
-            >
-              {theme === 'dark' ? <MdLightMode size={18} /> : <MdDarkMode size={18} />}
-            </button>
-          </div>
-
-          <div className="login-form-header">
-            <h2 className="login-form-title">Welcome back</h2>
-            <p className="login-form-subtitle">Enter your credentials to access the portal</p>
-          </div>
-
-          {error && <div className="login-error">{error}</div>}
-
-          <form onSubmit={handleSubmit}>
-            {/* Username */}
-            <div className="form-group">
-              <label className="form-label" htmlFor="username">Username</label>
-              <div className="search-bar" style={{ padding: '0 0.875rem' }}>
-                <FiUser size={15} style={{ flexShrink: 0 }} />
-                <input
-                  id="username"
-                  type="text"
-                  placeholder="Enter your username"
-                  value={formData.username}
-                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                  required
-                  autoFocus
-                />
-              </div>
-            </div>
-
-            {/* Password */}
-            <div className="form-group" style={{ marginBottom: '1.75rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.375rem' }}>
-                <label className="form-label" htmlFor="password" style={{ margin: 0 }}>Password</label>
-              </div>
-              <div className="search-bar" style={{ padding: '0 0.875rem' }}>
-                <FiLock size={15} style={{ flexShrink: 0 }} />
-                <input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  required
-                />
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={submitting}
-              style={{ width: '100%', padding: '0.8125rem', fontSize: '0.9375rem', justifyContent: 'center' }}
-            >
-              {submitting ? 'Signing in…' : 'Sign In'}
-            </button>
-          </form>
-
-          <p style={{ marginTop: '2rem', fontSize: '0.8rem', color: 'var(--text-muted)', textAlign: 'center' }}>
-            PlaceHub · {new Date().getFullYear()}
-          </p>
-        </div>
-      </div>
+      <p className="login-legal">PlaceHub · {new Date().getFullYear()}</p>
     </div>
   );
 };
