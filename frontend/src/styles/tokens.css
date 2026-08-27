@@ -24,6 +24,10 @@
   --border-color: #e4e9f2;
   --input-focus:  #6366f1;
 
+  /* translucent surface for blurred sticky bars */
+  --bg-glass:      rgba(255, 255, 255, 0.72);
+  --border-subtle: rgba(15, 23, 42, 0.06);
+
   --success: #10b981;
   --danger:  #ef4444;
   --warning: #f59e0b;
@@ -60,6 +64,8 @@
   --text-muted: #94a3b8;
 
   --border-color: #253148;
+  --bg-glass:      rgba(13, 20, 36, 0.72);
+  --border-subtle: rgba(255, 255, 255, 0.07);
   --primary-light: rgba(99, 102, 241, 0.16);
   --primary-mid:   rgba(99, 102, 241, 0.26);
 

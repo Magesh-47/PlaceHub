@@ -4,7 +4,7 @@
 .sidebar {
   width: var(--sidebar-w);
   background: var(--bg-sidebar);
-  border-right: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
   position: sticky;
@@ -199,8 +199,11 @@
    ───────────────────────────────────────────── */
 .topbar {
   height: var(--topbar-h);
-  background: var(--bg-topbar);
-  border-bottom: 1px solid var(--border-color);
+  /* frosted so page content shows through as it scrolls under the bar */
+  background: var(--bg-glass);
+  backdrop-filter: blur(14px) saturate(180%);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  border-bottom: 1px solid var(--border-subtle);
   padding: 0 1.5rem;
   display: flex;
   align-items: center;

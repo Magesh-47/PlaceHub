@@ -125,15 +125,16 @@
 .card {
   background: var(--bg-card);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-xs);
   padding: 1.5rem;
-  border: 1px solid var(--border-color);
-  transition: var(--transition);
+  border: 1px solid var(--border-subtle);
+  transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
 }
 
 .card-hover:hover {
   box-shadow: var(--shadow-lg);
-  transform: translateY(-2px);
+  border-color: var(--primary-mid);
+  transform: translateY(-3px);
 }
 
 /* Glass */
@@ -164,17 +165,22 @@
 }
 
 .btn-primary {
-  background: var(--primary-color);
+  /* same gradient as the login CTA and brand marks, so the accent reads as one system */
+  background: var(--grad-primary);
   color: #fff;
-  border-color: var(--primary-color);
+  border-color: transparent;
+  box-shadow:
+    0 6px 16px -6px var(--primary-glow),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.18);
 }
 .btn-primary:hover {
-  background: var(--primary-hover);
-  border-color: var(--primary-hover);
+  filter: brightness(1.07);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  box-shadow:
+    0 12px 24px -8px var(--primary-glow),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.24);
 }
-.btn-primary:active { transform: none; box-shadow: none; }
+.btn-primary:active { transform: none; filter: none; }
 
 .btn-outline {
   background: transparent;
@@ -220,10 +226,10 @@
 
 .form-control {
   width: 100%;
-  padding: 0.625rem 0.875rem;
+  padding: 0.6875rem 0.875rem;
   background: var(--bg-input);
   border: 1.5px solid var(--border-color);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   font-size: 0.9375rem;
   color: var(--text-main);
   transition: var(--transition);
@@ -233,7 +239,7 @@
 .form-control:focus {
   border-color: var(--input-focus);
   outline: 0;
-  box-shadow: 0 0 0 3px var(--primary-light);
+  box-shadow: 0 0 0 3.5px var(--primary-mid);
 }
 
 .form-control::placeholder { color: var(--text-muted); }
@@ -310,8 +316,8 @@ select.form-control {
   overflow-x: auto;
   background: var(--bg-card);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-xs);
 }
 
 table {
@@ -322,7 +328,7 @@ table {
 }
 
 th {
-  background: var(--bg-body);
+  background: transparent;
   color: var(--text-muted);
   font-weight: 700;
   font-size: 0.75rem;
@@ -343,7 +349,12 @@ td {
 
 tr:last-child td { border-bottom: none; }
 
+tbody tr { transition: background 0.15s ease; }
 tbody tr:hover td { background: var(--primary-light); }
+
+/* hairline rows read lighter than full-strength borders */
+td { border-bottom-color: var(--border-subtle); }
+th { border-bottom-color: var(--border-color); }
 
 .td-actions {
   display: flex;
@@ -374,9 +385,9 @@ tbody tr:hover td { background: var(--primary-light); }
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.55);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: rgba(8, 11, 22, 0.6);
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -387,8 +398,8 @@ tbody tr:hover td { background: var(--primary-light); }
 .modal-card {
   background: var(--bg-card);
   border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-lg);
-  border: 1px solid var(--border-color);
+  box-shadow: 0 32px 64px -16px rgba(2, 4, 12, 0.45);
+  border: 1px solid var(--border-subtle);
   width: 100%;
   max-width: 460px;
   max-height: 90vh;

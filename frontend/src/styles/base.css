@@ -26,3 +26,40 @@ input, select, textarea { font-family: inherit; }
   min-height: 100vh;
 }
 
+
+/* ── Focus rings: keyboard only ──
+   :focus-visible so a mouse click never paints a ring, but tabbing always does. */
+:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* inputs already draw their own ring via box-shadow — don't stack a second one */
+.form-control:focus-visible,
+.login-input-wrap input:focus-visible {
+  outline: none;
+}
+
+/* ── Thin scrollbars ──
+   border + background-clip fakes a padded thumb, which Firefox's
+   scrollbar-width: thin gives for free but WebKit does not. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+}
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+  background-clip: content-box;
+}
