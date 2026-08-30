@@ -147,6 +147,27 @@ public class ApplicationService {
         return getApplicationById(savedApplication.getId());
     }
 
+    @Transactional
+    public ApplicationResponse updateApplicationStatus(Long applicationId, JobApplication.ApplicationStatus status) {
+        JobApplication application = applicationRepository
+                .findById(Objects.requireNonNull(applicationId, "Application ID cannot be null"))
+                .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
+
+        application.setApplicationStatus(status);
+        JobApplication saved = applicationRepository.save(application);
+
+        StudentProfile student = saved.getStudent();
+        Job job = saved.getJob();
+        emailService.sendApplicationStatusUpdate(
+                student.getEmail(),
+                student.getFullName(),
+                job.getCompanyName(),
+                job.getJobRole(),
+                status.name());
+
+        return mapToResponse(saved);
+    }
+
     public List<ApplicationResponse> getApplicationsByJob(Long jobId, String department) {
         List<JobApplication> applications = applicationRepository.findByJobId(jobId);
 

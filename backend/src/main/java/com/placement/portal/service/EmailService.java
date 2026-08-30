@@ -39,6 +39,35 @@ public class EmailService {
         }
     }
 
+    @org.springframework.scheduling.annotation.Async
+    public void sendApplicationStatusUpdate(String toEmail, String studentName, String companyName, String jobRole,
+            String status) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(fromEmail);
+            message.setTo(toEmail);
+            message.setSubject("Application Update - " + companyName);
+
+            String statusText = "ACCEPTED".equalsIgnoreCase(status)
+                    ? "has been ACCEPTED"
+                    : "REJECTED".equalsIgnoreCase(status)
+                            ? "was not selected to move forward"
+                            : "has been updated to " + status;
+
+            String body = String.format(
+                    "Dear %s,\n\n" +
+                            "Your application for the role of %s at %s %s.\n\n" +
+                            "Best regards,\n" +
+                            "Student Placement Hub Team",
+                    studentName, jobRole, companyName, statusText);
+
+            message.setText(body);
+            mailSender.send(message);
+        } catch (Exception e) {
+            System.err.println("Failed to send status update email: " + e.getMessage());
+        }
+    }
+
     public void sendOtp(String toEmail, String otp) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();

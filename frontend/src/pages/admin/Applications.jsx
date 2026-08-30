@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
-import { FaDownload, FaFileAlt } from 'react-icons/fa';
+import { FaDownload, FaFileAlt, FaCheck, FaTimes } from 'react-icons/fa';
 import { FiSearch } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import PageHeader from '../../components/PageHeader';
@@ -14,6 +14,7 @@ const AdminApplications = () => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(false);
   const [filterDept, setFilterDept] = useState('');
+  const [updatingId, setUpdatingId] = useState(null);
 
   /* ── Fetch jobs ─────────────────────────────── */
   useEffect(() => {
@@ -50,6 +51,20 @@ const AdminApplications = () => {
     } catch {
       toast.error('Failed to download file');
     }
+  };
+
+  const handleStatusUpdate = async (applicationId, status) => {
+    setUpdatingId(applicationId);
+    try {
+      const res = await api.patch(`/admin/applications/${applicationId}/status`, { status });
+      setApplications((prev) =>
+        prev.map((app) => (app.applicationId === applicationId ? res.data : app))
+      );
+      toast.success(`Application ${status === 'ACCEPTED' ? 'accepted' : 'rejected'}`);
+    } catch {
+      toast.error('Failed to update application status');
+    }
+    setUpdatingId(null);
   };
 
   const exportFile = async (endpoint, filename) => {
@@ -145,11 +160,12 @@ const AdminApplications = () => {
                       <th>Files / Resume</th>
                       <th>Applied At</th>
                       <th>Status</th>
+                      <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {applications.map((app) => (
-                      <tr key={app.id}>
+                      <tr key={app.applicationId}>
                         <td style={{ fontWeight: 600 }}>{app.studentName}</td>
                         <td style={{ color: 'var(--text-muted)' }}>{app.studentEmail}</td>
                         <td>
@@ -170,6 +186,28 @@ const AdminApplications = () => {
                           {new Date(app.appliedAt).toLocaleDateString()}
                         </td>
                         <td><StatusBadge status={app.applicationStatus} /></td>
+                        <td>
+                          <div style={{ display: 'flex', gap: '0.375rem' }}>
+                            <button
+                              className="btn btn-outline btn-sm"
+                              style={{ color: 'var(--success-color, #16a34a)', borderColor: 'var(--success-color, #16a34a)' }}
+                              disabled={updatingId === app.applicationId || app.applicationStatus === 'ACCEPTED'}
+                              onClick={() => handleStatusUpdate(app.applicationId, 'ACCEPTED')}
+                              title="Accept application"
+                            >
+                              <FaCheck size={11} /> Accept
+                            </button>
+                            <button
+                              className="btn btn-outline btn-sm"
+                              style={{ color: 'var(--danger-color, #dc2626)', borderColor: 'var(--danger-color, #dc2626)' }}
+                              disabled={updatingId === app.applicationId || app.applicationStatus === 'REJECTED'}
+                              onClick={() => handleStatusUpdate(app.applicationId, 'REJECTED')}
+                              title="Reject application"
+                            >
+                              <FaTimes size={11} /> Reject
+                            </button>
+                          </div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>

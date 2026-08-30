@@ -135,6 +135,14 @@ public class AdminController {
         return ResponseEntity.ok(applications);
     }
 
+    @PatchMapping("/applications/{id}/status")
+    public ResponseEntity<ApplicationResponse> updateApplicationStatus(
+            @PathVariable Long id,
+            @Valid @RequestBody ApplicationStatusUpdateRequest request) {
+        ApplicationResponse response = applicationService.updateApplicationStatus(id, request.getStatus());
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/applications/export/{jobId}")
     public ResponseEntity<byte[]> exportApplications(
             @PathVariable Long jobId,
