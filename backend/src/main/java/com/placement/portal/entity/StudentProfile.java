@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +42,15 @@ public class StudentProfile {
 
     @Column
     private java.time.LocalDate dateOfBirth;
+
+    @Column(name = "profile_picture", columnDefinition = "bytea")
+    @JdbcTypeCode(SqlTypes.BINARY)
+    @JsonIgnore
+    private byte[] profilePicture;
+
+    @Column(name = "profile_picture_type")
+    @JsonIgnore
+    private String profilePictureType;
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)

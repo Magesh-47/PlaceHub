@@ -13,6 +13,42 @@ const EMPTY_FORM = {
   department: '', year: 1, phone: '', cgpa: 0.0, dateOfBirth: '',
 };
 
+const StudentAvatar = ({ student }) => {
+  const [url, setUrl] = useState(null);
+  const initials = (student.fullName || student.username || '?')
+    .split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
+
+  useEffect(() => {
+    if (!student.hasProfilePicture) return undefined;
+    let objectUrl = null;
+    let cancelled = false;
+    api.get(`/files/profile-picture/${student.userId}`, { responseType: 'blob' })
+      .then((res) => {
+        if (cancelled) return;
+        objectUrl = window.URL.createObjectURL(res.data);
+        setUrl(objectUrl);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+      if (objectUrl) window.URL.revokeObjectURL(objectUrl);
+    };
+  }, [student.hasProfilePicture, student.userId]);
+
+  return (
+    <div
+      style={{
+        width: 32, height: 32, borderRadius: '50%', overflow: 'hidden', flexShrink: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        background: url ? 'transparent' : 'linear-gradient(135deg, #4f46e5, #7c3aed)',
+        fontSize: '0.6875rem', fontWeight: 700, color: '#fff',
+      }}
+    >
+      {url ? <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : initials}
+    </div>
+  );
+};
+
 const AdminStudents = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -214,6 +250,7 @@ const AdminStudents = () => {
         <table>
           <thead>
             <tr>
+              <th>Photo</th>
               <th>Full Name</th>
               <th>Username</th>
               <th>Department</th>
@@ -225,10 +262,10 @@ const AdminStudents = () => {
           </thead>
           <tbody>
             {loading ? (
-              <TableSkeleton rows={6} cols={7} />
+              <TableSkeleton rows={6} cols={8} />
             ) : students.length === 0 ? (
               <tr>
-                <td colSpan={7}>
+                <td colSpan={8}>
                   <EmptyState
                     icon={<FaUserGraduate />}
                     title="No students found"
@@ -239,6 +276,7 @@ const AdminStudents = () => {
             ) : (
               students.map((s) => (
                 <tr key={s.userId}>
+                  <td><StudentAvatar student={s} /></td>
                   <td style={{ fontWeight: 600 }}>{s.fullName}</td>
                   <td style={{ color: 'var(--text-muted)' }}>{s.username}</td>
                   <td>{s.department}</td>

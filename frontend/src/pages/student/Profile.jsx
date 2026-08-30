@@ -28,11 +28,29 @@ const StudentProfile = () => {
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [avatarUrl, setAvatarUrl] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [uploadingPicture, setUploadingPicture] = useState(false);
+
+  const loadAvatar = async (userId) => {
+    try {
+      const res = await api.get(`/files/profile-picture/${userId}`, { responseType: 'blob' });
+      setAvatarUrl((prev) => {
+        if (prev) window.URL.revokeObjectURL(prev);
+        return window.URL.createObjectURL(res.data);
+      });
+    } catch {
+      setAvatarUrl(null);
+    }
+  };
 
   useEffect(() => {
     api.get('/student/profile')
-      .then((r) => { setProfile(r.data); setFormData(r.data); })
+      .then((r) => {
+        setProfile(r.data);
+        setFormData(r.data);
+        if (r.data.hasProfilePicture) loadAvatar(r.data.userId);
+      })
       .catch(() => toast.error('Failed to load profile'))
       .finally(() => setLoading(false));
   }, []);
@@ -42,9 +60,30 @@ const StudentProfile = () => {
 
   const ch = (field) => (e) => setFormData({ ...formData, [field]: e.target.value });
 
-  const handleFile = (e) => {
+  const handleFile = async (e) => {
     const file = e.target.files[0];
-    if (file) { const r = new FileReader(); r.onloadend = () => setPreview(r.result); r.readAsDataURL(file); }
+    if (!file) return;
+
+    const r = new FileReader();
+    r.onloadend = () => setPreview(r.result);
+    r.readAsDataURL(file);
+
+    setUploadingPicture(true);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await api.post('/student/profile/picture', fd, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      setProfile(res.data);
+      await loadAvatar(res.data.userId);
+      toast.success('Profile picture updated');
+    } catch (err) {
+      toast.error('Upload failed: ' + (err.response?.data?.message || err.message));
+    } finally {
+      setPreview(null);
+      setUploadingPicture(false);
+    }
   };
 
   const handleSave = async () => {
@@ -100,7 +139,7 @@ const StudentProfile = () => {
             style={{
               width: 88, height: 88,
               borderRadius: '50%',
-              background: preview ? 'transparent' : 'linear-gradient(135deg, #4f46e5, #7c3aed)',
+              background: (preview || avatarUrl) ? 'transparent' : 'linear-gradient(135deg, #4f46e5, #7c3aed)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               margin: '0 auto 1rem',
               overflow: 'hidden',
@@ -108,8 +147,8 @@ const StudentProfile = () => {
               flexShrink: 0,
             }}
           >
-            {preview
-              ? <img src={preview} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            {preview || avatarUrl
+              ? <img src={preview || avatarUrl} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               : initials
             }
           </div>
@@ -121,7 +160,16 @@ const StudentProfile = () => {
           {editMode && (
             <div style={{ marginTop: '1.25rem' }}>
               <label className="form-label" style={{ textAlign: 'left' }}>Profile Picture</label>
-              <input type="file" className="form-control" accept="image/*" onChange={handleFile} />
+              <input
+                type="file"
+                className="form-control"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleFile}
+                disabled={uploadingPicture}
+              />
+              {uploadingPicture && (
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.375rem' }}>Uploading…</p>
+              )}
             </div>
           )}
         </div>

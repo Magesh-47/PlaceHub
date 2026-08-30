@@ -51,6 +51,14 @@ public class StudentController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping(value = "/profile/picture", consumes = { "multipart/form-data" })
+    public ResponseEntity<StudentResponse> updateProfilePicture(
+            @RequestPart("file") org.springframework.web.multipart.MultipartFile file,
+            Authentication authentication) {
+        StudentResponse response = studentService.updateProfilePicture(authentication.getName(), file);
+        return ResponseEntity.ok(response);
+    }
+
     // ========== Job Browsing ==========
 
     @GetMapping("/jobs")

@@ -17,4 +17,5 @@ public class StudentResponse {
     private String phone;
     private Double cgpa;
     private java.time.LocalDate dateOfBirth;
+    private boolean hasProfilePicture;
 }

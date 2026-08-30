@@ -225,7 +225,8 @@ public class StudentService {
                 profile.getYear(),
                 profile.getPhone(),
                 profile.getCgpa(),
-                profile.getDateOfBirth());
+                profile.getDateOfBirth(),
+                profile.getProfilePicture() != null);
     }
 
     private StudentResponse mapProfileToResponse(StudentProfile profile) {
@@ -239,6 +240,39 @@ public class StudentService {
                 profile.getYear(),
                 profile.getPhone(),
                 profile.getCgpa(),
-                profile.getDateOfBirth());
+                profile.getDateOfBirth(),
+                profile.getProfilePicture() != null);
+    }
+
+    private static final java.util.Set<String> ALLOWED_PICTURE_TYPES = java.util.Set.of(
+            "image/jpeg", "image/png", "image/webp");
+    private static final long MAX_PICTURE_SIZE_BYTES = 2 * 1024 * 1024;
+
+    @Transactional
+    public StudentResponse updateProfilePicture(String username,
+            org.springframework.web.multipart.MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("No file provided");
+        }
+        if (!ALLOWED_PICTURE_TYPES.contains(file.getContentType())) {
+            throw new IllegalArgumentException("Only JPEG, PNG, or WEBP images are allowed");
+        }
+        if (file.getSize() > MAX_PICTURE_SIZE_BYTES) {
+            throw new IllegalArgumentException("Image must be 2MB or smaller");
+        }
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
+
+        StudentProfile profile = user.getStudentProfile();
+        try {
+            profile.setProfilePicture(file.getBytes());
+            profile.setProfilePictureType(file.getContentType());
+        } catch (java.io.IOException e) {
+            throw new RuntimeException("Failed to process image upload", e);
+        }
+
+        userRepository.save(user);
+        return mapToResponse(user);
     }
 }
