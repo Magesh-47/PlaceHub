@@ -86,6 +86,15 @@ public class JobService {
                 .map(this::mapToResponse);
     }
 
+    public Page<JobResponse> searchActiveJobs(Pageable pageable, String keyword, String location) {
+        if (pageable == null) {
+            throw new IllegalArgumentException("Pageable cannot be null");
+        }
+
+        return jobRepository.searchActiveJobs(keyword, location, pageable)
+                .map(this::mapToResponse);
+    }
+
     @Transactional
     public JobResponse updateJob(Long id, JobRequest request) {
         if (id == null) {

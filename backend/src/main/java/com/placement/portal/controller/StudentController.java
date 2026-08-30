@@ -56,9 +56,16 @@ public class StudentController {
     @GetMapping("/jobs")
     public ResponseEntity<Page<JobResponse>> getActiveJobs(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<JobResponse> jobs = jobService.getActiveJobs(pageable);
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String location,
+            @RequestParam(defaultValue = "applicationDeadline") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+        org.springframework.data.domain.Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction)
+                ? org.springframework.data.domain.Sort.Direction.DESC
+                : org.springframework.data.domain.Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, org.springframework.data.domain.Sort.by(sortDirection, sortBy));
+        Page<JobResponse> jobs = jobService.searchActiveJobs(pageable, keyword, location);
         return ResponseEntity.ok(jobs);
     }
 

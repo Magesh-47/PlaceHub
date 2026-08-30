@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { toast } from 'react-toastify';
-import { FiSearch } from 'react-icons/fi';
+import { FiSearch, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { FaMapMarkerAlt, FaMoneyBillWave, FaCalendarAlt, FaBriefcase } from 'react-icons/fa';
 import PageHeader from '../../components/PageHeader';
 import EmptyState from '../../components/EmptyState';
@@ -21,7 +21,11 @@ const StudentJobs = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [locationFilter, setLocationFilter] = useState('');
+  const [sortBy, setSortBy] = useState('applicationDeadline');
 
   const [selectedJob, setSelectedJob] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -29,12 +33,31 @@ const StudentJobs = () => {
   const [appFiles, setAppFiles] = useState({});
   const [submitting, setSubmitting] = useState(false);
 
+  /* ── Debounce search input ───────────────────── */
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPage(0);
+      setDebouncedSearch(searchTerm);
+    }, 350);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
   /* ── Fetch ───────────────────────────────────── */
   const fetchJobs = async () => {
     setLoading(true);
     try {
-      const res = await api.get(`/student/jobs?page=${page}&size=12`);
+      const [sortField, direction] = sortBy.split(',');
+      const params = {
+        page,
+        size: 12,
+        sortBy: sortField,
+        direction,
+        keyword: debouncedSearch || undefined,
+        location: locationFilter || undefined,
+      };
+      const res = await api.get('/student/jobs', { params });
       setJobs(res.data.content);
+      setTotalPages(res.data.totalPages);
     } catch {
       toast.error('Failed to load jobs');
     }
@@ -45,7 +68,7 @@ const StudentJobs = () => {
     fetchJobs();
     const interval = setInterval(fetchJobs, 2 * 60 * 1000);
     return () => clearInterval(interval);
-  }, [page]); // eslint-disable-line
+  }, [page, debouncedSearch, locationFilter, sortBy]); // eslint-disable-line
 
   /* ── Apply ───────────────────────────────────── */
   const openJobDetails = async (jobId) => {
@@ -83,13 +106,6 @@ const StudentJobs = () => {
     setSubmitting(false);
   };
 
-  /* ── Filtered jobs ───────────────────────────── */
-  const filtered = jobs.filter(
-    (j) =>
-      j.jobRole.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      j.companyName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   /* ── Render ──────────────────────────────────── */
   return (
     <div>
@@ -109,13 +125,35 @@ const StudentJobs = () => {
         }
       />
 
+      {/* Filters */}
+      <div className="card" style={{ marginBottom: '1.25rem', display: 'flex', gap: '0.75rem', alignItems: 'flex-end', flexWrap: 'wrap' }}>
+        <div style={{ flex: 1, minWidth: 180 }}>
+          <label className="form-label">Location</label>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="e.g. Bengaluru, Remote…"
+            value={locationFilter}
+            onChange={(e) => { setPage(0); setLocationFilter(e.target.value); }}
+          />
+        </div>
+        <div style={{ minWidth: 200 }}>
+          <label className="form-label">Sort by</label>
+          <select className="form-control" value={sortBy} onChange={(e) => { setPage(0); setSortBy(e.target.value); }}>
+            <option value="applicationDeadline,asc">Deadline: Soonest first</option>
+            <option value="applicationDeadline,desc">Deadline: Latest first</option>
+            <option value="createdAt,desc">Recently posted</option>
+          </select>
+        </div>
+      </div>
+
       {loading ? (
         <Loader message="Loading jobs…" />
-      ) : filtered.length === 0 ? (
+      ) : jobs.length === 0 ? (
         <EmptyState
           icon={<FaBriefcase />}
           title="No jobs found"
-          description={searchTerm ? 'Try a different search term.' : 'No job listings are available right now.'}
+          description={searchTerm || locationFilter ? 'Try different search or filter criteria.' : 'No job listings are available right now.'}
         />
       ) : (
         <div
@@ -125,7 +163,7 @@ const StudentJobs = () => {
             gap: '1.25rem',
           }}
         >
-          {filtered.map((job) => {
+          {jobs.map((job) => {
             const days = Math.floor((new Date(job.applicationDeadline) - new Date()) / 86400000);
             return (
               <div
@@ -170,6 +208,28 @@ const StudentJobs = () => {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {!loading && jobs.length > 0 && totalPages > 1 && (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem', marginTop: '1.5rem' }}>
+          <button
+            className="btn btn-outline btn-sm"
+            onClick={() => setPage((p) => Math.max(0, p - 1))}
+            disabled={page === 0}
+          >
+            <FiChevronLeft size={14} /> Prev
+          </button>
+          <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+            Page {page + 1} of {totalPages}
+          </span>
+          <button
+            className="btn btn-outline btn-sm"
+            onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+            disabled={page >= totalPages - 1}
+          >
+            Next <FiChevronRight size={14} />
+          </button>
         </div>
       )}
 

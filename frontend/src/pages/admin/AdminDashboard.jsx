@@ -4,7 +4,7 @@ import api from '../../services/api';
 import Loader from '../../components/Loader';
 import {
   FiUsers, FiBriefcase, FiFileText, FiTrendingUp,
-  FiAlertTriangle, FiClock,
+  FiAlertTriangle, FiClock, FiAward,
 } from 'react-icons/fi';
 
 /* whole days from today until an ISO date (negative = already past) */
@@ -39,16 +39,18 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
   const [data, setData] = useState({ students: 0, jobs: [], apps: [] });
+  const [stats, setStats] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
 
     (async () => {
       try {
-        // there is no aggregate/stats endpoint — compose from the paginated ones
-        const [stuRes, jobRes] = await Promise.all([
+        // there is no aggregate/stats endpoint for per-job data — compose from the paginated ones
+        const [stuRes, jobRes, statsRes] = await Promise.all([
           api.get('/admin/students', { params: { page: 0, size: 1 } }),
           api.get('/admin/jobs', { params: { page: 0, size: 200 } }),
+          api.get('/admin/dashboard/stats'),
         ]);
 
         const jobs = jobRes.data.content || [];
@@ -65,6 +67,7 @@ const AdminDashboard = () => {
 
         if (cancelled) return;
         setData({ students: stuRes.data.totalElements ?? 0, jobs, apps: perJob });
+        setStats(statsRes.data);
       } catch (e) {
         if (!cancelled) setFailed(true);
         console.error(e);
@@ -120,7 +123,7 @@ const AdminDashboard = () => {
     ? (allApps.length / activeJobs.length).toFixed(1)
     : '0';
 
-  const stats = [
+  const statCards = [
     { label: 'Students',      value: students,          tone: 'indigo',
       icon: <FiUsers size={17} />,      foot: engaged + ' have applied' },
     { label: 'Active jobs',   value: activeJobs.length, tone: 'emerald',
@@ -130,6 +133,16 @@ const AdminDashboard = () => {
     { label: 'Participation', value: engagedPct + '%',  tone: 'violet',
       icon: <FiTrendingUp size={17} />, foot: engaged + ' of ' + students + ' students' },
   ];
+
+  if (stats) {
+    statCards.push({
+      label: 'Placement rate',
+      value: stats.overallPlacementRate + '%',
+      tone: 'emerald',
+      icon: <FiAward size={17} />,
+      foot: stats.placedStudents + ' of ' + stats.totalStudents + ' students placed',
+    });
+  }
 
   return (
     <div className="animate-fade-in">
@@ -142,7 +155,7 @@ const AdminDashboard = () => {
 
       {/* ── stat row ── */}
       <div className="dash-stats">
-        {stats.map((s) => (
+        {statCards.map((s) => (
           <div className={'dash-stat dash-stat--' + s.tone} key={s.label}>
             <div className="dash-stat-top">
               <span className="dash-stat-icon">{s.icon}</span>
@@ -273,6 +286,54 @@ const AdminDashboard = () => {
           )}
         </section>
       </div>
+
+      {/* ── department-wise placement ── */}
+      {stats && (
+        <section className="dash-panel" style={{ marginTop: '1rem' }}>
+          <header className="dash-panel-head">
+            <h2 className="dash-panel-title">Department-wise placement</h2>
+            <span className="dash-panel-meta">{stats.departmentStats.length} departments</span>
+          </header>
+
+          {stats.departmentStats.length === 0 ? (
+            <p className="dash-none">No student records yet.</p>
+          ) : (
+            <div className="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Department</th>
+                    <th>Students</th>
+                    <th>Applied</th>
+                    <th>Placed</th>
+                    <th>Placement Rate</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {stats.departmentStats.map((d) => (
+                    <tr key={d.department}>
+                      <td style={{ fontWeight: 600 }}>{d.department}</td>
+                      <td>{d.totalStudents}</td>
+                      <td>{d.appliedStudents}</td>
+                      <td>{d.placedStudents}</td>
+                      <td>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
+                          <div className="dash-bar-track" style={{ width: '6rem' }}>
+                            <div className="dash-bar-fill" style={{ width: Math.max(2, d.placementRate) + '%' }} />
+                          </div>
+                          <span style={{ fontSize: '0.8125rem', fontWeight: 600, fontVariantNumeric: 'tabular-nums' }}>
+                            {d.placementRate}%
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+      )}
     </div>
   );
 };

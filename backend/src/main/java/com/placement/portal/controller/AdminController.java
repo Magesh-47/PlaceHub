@@ -32,6 +32,16 @@ public class AdminController {
     @Autowired
     private ApplicationService applicationService;
 
+    @Autowired
+    private com.placement.portal.service.DashboardService dashboardService;
+
+    // ========== Dashboard / Analytics ==========
+
+    @GetMapping("/dashboard/stats")
+    public ResponseEntity<DashboardStatsResponse> getDashboardStats() {
+        return ResponseEntity.ok(dashboardService.getStats());
+    }
+
     // ========== Student Management ==========
 
     @PostMapping("/students")
