@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import { toast } from 'react-toastify';
-import { FaDownload, FaClipboardList } from 'react-icons/fa';
+import { FaDownload, FaClipboardList, FaSearch } from 'react-icons/fa';
 import PageHeader from '../../components/PageHeader';
 import StatusBadge from '../../components/StatusBadge';
 import EmptyState from '../../components/EmptyState';
@@ -10,6 +11,7 @@ import Loader from '../../components/Loader';
 const StudentApplications = () => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     api.get('/student/applications')
@@ -45,6 +47,11 @@ const StudentApplications = () => {
             icon={<FaClipboardList />}
             title="No applications yet"
             description="You haven't applied to any jobs yet. Browse open listings to get started."
+            action={
+              <button className="btn btn-primary btn-sm" onClick={() => navigate('/student/jobs')}>
+                <FaSearch size={12} /> Browse Jobs
+              </button>
+            }
           />
         </div>
       ) : (

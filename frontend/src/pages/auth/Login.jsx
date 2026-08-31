@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { FiUser, FiLock, FiArrowRight, FiAlertCircle } from 'react-icons/fi';
+import { FiUser, FiLock, FiArrowRight, FiAlertCircle, FiEye, FiEyeOff } from 'react-icons/fi';
 
 const highlights = ['Browse roles', 'Track status', 'Admin-managed'];
 
@@ -10,6 +10,7 @@ const Login = () => {
   const [formData, setFormData] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -78,13 +79,25 @@ const Login = () => {
               <FiLock size={15} />
               <input
                 id="password"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 placeholder="••••••••"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 required
                 autoComplete="current-password"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                title={showPassword ? 'Hide password' : 'Show password'}
+                style={{
+                  background: 'none', border: 'none', padding: 0, margin: 0,
+                  display: 'flex', alignItems: 'center', cursor: 'pointer', flexShrink: 0,
+                }}
+              >
+                {showPassword ? <FiEyeOff size={15} /> : <FiEye size={15} />}
+              </button>
             </div>
           </div>
 
