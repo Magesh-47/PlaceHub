@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { toast } from 'react-toastify';
-import { FiSearch, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiSearch, FiChevronLeft, FiChevronRight, FiX } from 'react-icons/fi';
 import { FaMapMarkerAlt, FaMoneyBillWave, FaCalendarAlt, FaBriefcase } from 'react-icons/fa';
 import PageHeader from '../../components/PageHeader';
 import EmptyState from '../../components/EmptyState';
@@ -106,6 +106,13 @@ const StudentJobs = () => {
     setSubmitting(false);
   };
 
+  const handleClearFilters = () => {
+    setSearchTerm('');
+    setDebouncedSearch('');
+    setLocationFilter('');
+    setPage(0);
+  };
+
   /* ── Render ──────────────────────────────────── */
   return (
     <div>
@@ -154,6 +161,13 @@ const StudentJobs = () => {
           icon={<FaBriefcase />}
           title="No jobs found"
           description={searchTerm || locationFilter ? 'Try different search or filter criteria.' : 'No job listings are available right now.'}
+          action={
+            (searchTerm || locationFilter) && (
+              <button className="btn btn-outline btn-sm" onClick={handleClearFilters}>
+                <FiX size={13} /> Clear filters
+              </button>
+            )
+          }
         />
       ) : (
         <div
