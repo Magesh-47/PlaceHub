@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import api from '../../services/api';
 import Loader from '../../components/Loader';
+import { avatarGradientFor, badgeColorFor } from '../../utils/colors';
 import {
   FiUsers, FiBriefcase, FiFileText, FiTrendingUp,
   FiAlertTriangle, FiClock, FiAward,
@@ -36,6 +38,7 @@ const STATUS_TONE = {
 
 const AdminDashboard = () => {
   const { user } = useAuth();
+  const { theme } = useTheme();
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
   const [data, setData] = useState({ students: 0, jobs: [], apps: [] });
@@ -272,7 +275,7 @@ const AdminDashboard = () => {
             <ul className="dash-list">
               {recent.map((a) => (
                 <li className="dash-list-row" key={a.applicationId}>
-                  <span className="dash-avatar">
+                  <span className="dash-avatar" style={{ background: avatarGradientFor(a.studentEmail || a.studentName) }}>
                     {(a.studentName || '?').trim().charAt(0).toUpperCase()}
                   </span>
                   <div className="dash-list-main">
@@ -312,7 +315,9 @@ const AdminDashboard = () => {
                 <tbody>
                   {stats.departmentStats.map((d) => (
                     <tr key={d.department}>
-                      <td style={{ fontWeight: 600 }}>{d.department}</td>
+                      <td>
+                        <span className="badge" style={badgeColorFor(d.department, theme)}>{d.department}</span>
+                      </td>
                       <td>{d.totalStudents}</td>
                       <td>{d.appliedStudents}</td>
                       <td>{d.placedStudents}</td>
