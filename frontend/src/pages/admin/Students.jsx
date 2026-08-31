@@ -7,6 +7,8 @@ import PageHeader from '../../components/PageHeader';
 import EmptyState from '../../components/EmptyState';
 import { TableSkeleton } from '../../components/Loader';
 import { toast } from 'react-toastify';
+import { avatarGradientFor, badgeColorFor } from '../../utils/colors';
+import { useTheme } from '../../context/ThemeContext';
 
 const EMPTY_FORM = {
   username: '', password: '', fullName: '', email: '',
@@ -40,12 +42,21 @@ const StudentAvatar = ({ student }) => {
       style={{
         width: 32, height: 32, borderRadius: '50%', overflow: 'hidden', flexShrink: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: url ? 'transparent' : 'linear-gradient(135deg, #4f46e5, #7c3aed)',
+        background: url ? 'transparent' : avatarGradientFor(student.username || student.fullName),
         fontSize: '0.6875rem', fontWeight: 700, color: '#fff',
       }}
     >
       {url ? <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : initials}
     </div>
+  );
+};
+
+const DepartmentBadge = ({ department }) => {
+  const { theme } = useTheme();
+  return (
+    <span className="badge" style={badgeColorFor(department, theme)}>
+      {department}
+    </span>
   );
 };
 
@@ -279,7 +290,7 @@ const AdminStudents = () => {
                   <td><StudentAvatar student={s} /></td>
                   <td style={{ fontWeight: 600 }}>{s.fullName}</td>
                   <td style={{ color: 'var(--text-muted)' }}>{s.username}</td>
-                  <td>{s.department}</td>
+                  <td><DepartmentBadge department={s.department} /></td>
                   <td>Year {s.year}</td>
                   <td>
                     <span style={{ fontWeight: 600, color: s.cgpa >= 7 ? 'var(--success)' : s.cgpa >= 5 ? 'var(--warning)' : 'var(--danger)' }}>

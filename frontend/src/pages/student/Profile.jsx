@@ -5,6 +5,8 @@ import PageHeader from '../../components/PageHeader';
 import { toast } from 'react-toastify';
 import { FiEdit2, FiCheck, FiX } from 'react-icons/fi';
 import { FaUser } from 'react-icons/fa';
+import { avatarGradientFor, badgeColorFor } from '../../utils/colors';
+import { useTheme } from '../../context/ThemeContext';
 
 const Field = ({ label, children }) => (
   <div className="form-group">
@@ -23,6 +25,7 @@ const ReadOnly = ({ value }) => (
 );
 
 const StudentProfile = () => {
+  const { theme } = useTheme();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [editMode, setEditMode] = useState(false);
@@ -139,7 +142,7 @@ const StudentProfile = () => {
             style={{
               width: 88, height: 88,
               borderRadius: '50%',
-              background: (preview || avatarUrl) ? 'transparent' : 'linear-gradient(135deg, #4f46e5, #7c3aed)',
+              background: (preview || avatarUrl) ? 'transparent' : avatarGradientFor(profile.username || profile.fullName),
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               margin: '0 auto 1rem',
               overflow: 'hidden',
@@ -155,7 +158,11 @@ const StudentProfile = () => {
 
           <p style={{ fontWeight: 700, fontSize: '1rem', marginBottom: '0.25rem' }}>{profile.fullName}</p>
           <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>@{profile.username}</p>
-          <span className="badge badge-neutral">{profile.department || 'Student'}</span>
+          {profile.department ? (
+            <span className="badge" style={badgeColorFor(profile.department, theme)}>{profile.department}</span>
+          ) : (
+            <span className="badge badge-neutral">Student</span>
+          )}
 
           {editMode && (
             <div style={{ marginTop: '1.25rem' }}>

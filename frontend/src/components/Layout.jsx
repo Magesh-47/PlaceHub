@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import Sidebar from './Sidebar';
 import { MdLightMode, MdDarkMode } from 'react-icons/md';
 import { FiLogOut, FiKey, FiMenu, FiX } from 'react-icons/fi';
+import { avatarGradientFor } from '../utils/colors';
 
 /* ─── Layout ─────────────────────────────────────────────── */
 const Layout = () => {
@@ -133,7 +134,7 @@ const Layout = () => {
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', marginLeft: 'auto' }}>
               {/* User info */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
-                <div className="topbar-user-avatar">
+                <div className="topbar-user-avatar" style={{ background: avatarGradientFor(user.username) }}>
                   {user.username?.[0]?.toUpperCase()}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.25 }}>

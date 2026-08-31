@@ -9,8 +9,8 @@ const cards = [
     path: '/student/jobs',
     icon: <FaSearch size={22} />,
     desc: 'Explore available job opportunities and apply to those that match your skill set.',
-    color: '#4f46e5',
-    bg: 'rgba(79,70,229,0.09)',
+    color: '#0d9488',
+    bg: 'rgba(13,148,136,0.09)',
   },
   {
     title: 'My Profile',

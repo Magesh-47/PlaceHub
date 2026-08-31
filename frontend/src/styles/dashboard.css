@@ -38,10 +38,10 @@
   background: radial-gradient(circle at top right, var(--dash-tone-soft, transparent), transparent 70%);
 }
 
-.dash-stat--indigo  { --dash-tone: #6366f1; --dash-tone-soft: rgba(99, 102, 241, 0.14); }
+.dash-stat--indigo  { --dash-tone: #0d9488; --dash-tone-soft: rgba(13, 148, 136, 0.14); }
 .dash-stat--emerald { --dash-tone: #10b981; --dash-tone-soft: rgba(16, 185, 129, 0.14); }
 .dash-stat--amber   { --dash-tone: #f59e0b; --dash-tone-soft: rgba(245, 158, 11, 0.14); }
-.dash-stat--violet  { --dash-tone: #8b5cf6; --dash-tone-soft: rgba(139, 92, 246, 0.14); }
+.dash-stat--violet  { --dash-tone: #ec4899; --dash-tone-soft: rgba(236, 72, 153, 0.14); }
 
 .dash-stat-top {
   display: flex;
