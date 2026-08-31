@@ -4,7 +4,7 @@ const STATUS_MAP = {
   ACCEPTED:  { variant: 'success', label: 'Accepted'  },
   APPROVED:  { variant: 'success', label: 'Approved'  },
   REJECTED:  { variant: 'danger',  label: 'Rejected'  },
-  PENDING:   { variant: 'warning', label: 'Submitted' },
+  PENDING:   { variant: 'warning', label: 'Pending'   },
   SUBMITTED: { variant: 'info',    label: 'Submitted' },
   ACTIVE:    { variant: 'success', label: 'Active'    },
   INACTIVE:  { variant: 'neutral', label: 'Inactive'  },
