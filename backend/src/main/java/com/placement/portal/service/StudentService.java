@@ -276,9 +276,9 @@ public class StudentService {
         return mapToResponse(user);
     }
 
+    @Transactional
     public com.placement.portal.dto.StudentProfileDetailsResponse getProfileDetails(String username) {
-        StudentProfile profile = getProfileByUsername(username);
-        return new com.placement.portal.dto.StudentProfileDetailsResponse(profile.getSummary());
+        return mapToDetailsResponse(getProfileByUsername(username));
     }
 
     @Transactional
@@ -286,7 +286,41 @@ public class StudentService {
         StudentProfile profile = getProfileByUsername(username);
         profile.setSummary(summary);
         studentProfileRepository.save(profile);
-        return new com.placement.portal.dto.StudentProfileDetailsResponse(profile.getSummary());
+        return mapToDetailsResponse(profile);
+    }
+
+    @Transactional
+    public com.placement.portal.dto.StudentProfileDetailsResponse updateEducation(
+            String username, java.util.List<com.placement.portal.dto.EducationDto> entries) {
+        StudentProfile profile = getProfileByUsername(username);
+
+        profile.getEducation().clear();
+        int order = 0;
+        for (com.placement.portal.dto.EducationDto dto : entries) {
+            com.placement.portal.entity.EducationEntry entry = new com.placement.portal.entity.EducationEntry();
+            entry.setStudent(profile);
+            entry.setInstitution(dto.getInstitution());
+            entry.setDegree(dto.getDegree());
+            entry.setFieldOfStudy(dto.getFieldOfStudy());
+            entry.setStartYear(dto.getStartYear());
+            entry.setEndYear(dto.getEndYear());
+            entry.setGradeOrScore(dto.getGradeOrScore());
+            entry.setDisplayOrder(order++);
+            profile.getEducation().add(entry);
+        }
+
+        studentProfileRepository.save(profile);
+        return mapToDetailsResponse(profile);
+    }
+
+    private com.placement.portal.dto.StudentProfileDetailsResponse mapToDetailsResponse(StudentProfile profile) {
+        java.util.List<com.placement.portal.dto.EducationDto> education = profile.getEducation().stream()
+                .map(e -> new com.placement.portal.dto.EducationDto(
+                        e.getId(), e.getInstitution(), e.getDegree(), e.getFieldOfStudy(),
+                        e.getStartYear(), e.getEndYear(), e.getGradeOrScore()))
+                .collect(java.util.stream.Collectors.toList());
+
+        return new com.placement.portal.dto.StudentProfileDetailsResponse(profile.getSummary(), education);
     }
 
     private StudentProfile getProfileByUsername(String username) {

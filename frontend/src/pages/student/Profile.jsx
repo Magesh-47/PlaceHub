@@ -3,7 +3,7 @@ import api from '../../services/api';
 import Loader from '../../components/Loader';
 import PageHeader from '../../components/PageHeader';
 import { toast } from 'react-toastify';
-import { FiEdit2, FiCheck, FiX } from 'react-icons/fi';
+import { FiEdit2, FiCheck, FiX, FiTrash2, FiPlus } from 'react-icons/fi';
 import { FaUser } from 'react-icons/fa';
 import { avatarGradientFor, badgeColorFor } from '../../utils/colors';
 import { useTheme } from '../../context/ThemeContext';
@@ -23,6 +23,117 @@ const ReadOnly = ({ value }) => (
     {value || <span style={{ color: 'var(--text-muted)' }}>—</span>}
   </div>
 );
+
+const EMPTY_EDUCATION = { institution: '', degree: '', fieldOfStudy: '', startYear: '', endYear: '', gradeOrScore: '' };
+
+const EducationSection = ({ education, onSave }) => {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState([]);
+  const [saving, setSaving] = useState(false);
+
+  const startEditing = () => {
+    setDraft(education.length ? education.map((e) => ({ ...e })) : [{ ...EMPTY_EDUCATION }]);
+    setEditing(true);
+  };
+
+  const updateEntry = (index, field, value) => {
+    setDraft((prev) => prev.map((e, i) => (i === index ? { ...e, [field]: value } : e)));
+  };
+
+  const removeEntry = (index) => setDraft((prev) => prev.filter((_, i) => i !== index));
+  const addEntry = () => setDraft((prev) => [...prev, { ...EMPTY_EDUCATION }]);
+
+  const handleSave = async () => {
+    setSaving(true);
+    const cleaned = draft.filter((e) => e.institution.trim() || e.degree.trim());
+    const ok = await onSave(cleaned);
+    setSaving(false);
+    if (ok) setEditing(false);
+  };
+
+  return (
+    <div className="card" style={{ marginTop: '1.25rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', paddingBottom: '0.75rem', borderBottom: '1px solid var(--border-color)' }}>
+        <p style={{ fontWeight: 700, fontSize: '0.9375rem' }}>Education</p>
+        {editing ? (
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <button className="btn btn-primary btn-sm" onClick={handleSave} disabled={saving}>
+              <FiCheck size={13} /> {saving ? 'Saving…' : 'Save'}
+            </button>
+            <button className="btn btn-outline btn-sm" onClick={() => setEditing(false)}>
+              <FiX size={13} /> Cancel
+            </button>
+          </div>
+        ) : (
+          <button className="btn btn-outline btn-sm" onClick={startEditing}>
+            <FiEdit2 size={13} /> Edit
+          </button>
+        )}
+      </div>
+
+      {editing ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {draft.map((entry, i) => (
+            <div key={i} style={{ border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '1rem', position: 'relative' }}>
+              <button
+                type="button"
+                onClick={() => removeEntry(i)}
+                className="icon-btn danger"
+                style={{ position: 'absolute', top: '0.5rem', right: '0.5rem' }}
+                title="Remove entry"
+              >
+                <FiTrash2 size={14} />
+              </button>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 1rem', paddingRight: '2.5rem' }}>
+                <Field label="Institution">
+                  <input className="form-control" value={entry.institution} onChange={(e) => updateEntry(i, 'institution', e.target.value)} />
+                </Field>
+                <Field label="Degree">
+                  <input className="form-control" value={entry.degree} onChange={(e) => updateEntry(i, 'degree', e.target.value)} placeholder="e.g. B.Tech, 12th Grade" />
+                </Field>
+                <Field label="Field of Study">
+                  <input className="form-control" value={entry.fieldOfStudy || ''} onChange={(e) => updateEntry(i, 'fieldOfStudy', e.target.value)} placeholder="e.g. Computer Science" />
+                </Field>
+                <Field label="Grade / Score">
+                  <input className="form-control" value={entry.gradeOrScore || ''} onChange={(e) => updateEntry(i, 'gradeOrScore', e.target.value)} placeholder="e.g. 8.5 CGPA, 92%" />
+                </Field>
+                <Field label="Start Year">
+                  <input type="number" className="form-control" value={entry.startYear || ''} onChange={(e) => updateEntry(i, 'startYear', e.target.value)} placeholder="2019" />
+                </Field>
+                <Field label="End Year">
+                  <input type="number" className="form-control" value={entry.endYear || ''} onChange={(e) => updateEntry(i, 'endYear', e.target.value)} placeholder="Leave blank if ongoing" />
+                </Field>
+              </div>
+            </div>
+          ))}
+          <button type="button" className="btn btn-outline btn-sm" onClick={addEntry} style={{ alignSelf: 'flex-start' }}>
+            <FiPlus size={13} /> Add Education
+          </button>
+        </div>
+      ) : education.length === 0 ? (
+        <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>No education added yet.</p>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
+          {education.map((entry, i) => (
+            <div
+              key={entry.id ?? i}
+              style={{ paddingBottom: '0.875rem', borderBottom: i < education.length - 1 ? '1px solid var(--border-color)' : 'none' }}
+            >
+              <p style={{ fontWeight: 600, fontSize: '0.875rem' }}>
+                {entry.degree}{entry.fieldOfStudy ? ` in ${entry.fieldOfStudy}` : ''}
+              </p>
+              <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>{entry.institution}</p>
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                {entry.startYear || '—'} – {entry.endYear || 'Present'}
+                {entry.gradeOrScore ? ` · ${entry.gradeOrScore}` : ''}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const StudentProfile = () => {
   const { theme } = useTheme();
@@ -112,6 +223,29 @@ const StudentProfile = () => {
     setFormData({ ...profile, summary: details.summary || '' });
     setPreview(null);
     setEditMode(false);
+  };
+
+  const handleSaveEducation = async (entries) => {
+    try {
+      const payload = entries.map((e) => ({
+        institution: e.institution,
+        degree: e.degree,
+        fieldOfStudy: e.fieldOfStudy || null,
+        startYear: e.startYear ? parseInt(e.startYear, 10) : null,
+        endYear: e.endYear ? parseInt(e.endYear, 10) : null,
+        gradeOrScore: e.gradeOrScore || null,
+      }));
+      const res = await api.put('/student/profile/education', { education: payload });
+      setDetails(res.data);
+      toast.success('Education updated');
+      return true;
+    } catch (err) {
+      const msg = err.response?.data?.errors
+        ? Object.values(err.response.data.errors).join(', ')
+        : err.response?.data?.message || 'Unknown error';
+      toast.error('Failed to update education: ' + msg);
+      return false;
+    }
   };
 
   const initials = profile.fullName
@@ -275,6 +409,8 @@ const StudentProfile = () => {
           </p>
         )}
       </div>
+
+      <EducationSection education={details.education || []} onSave={handleSaveEducation} />
     </div>
   );
 };

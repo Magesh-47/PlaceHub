@@ -63,4 +63,9 @@ public class StudentProfile {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<JobApplication> applications = new ArrayList<>();
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("displayOrder ASC")
+    @JsonIgnore
+    private List<EducationEntry> education = new ArrayList<>();
 }
