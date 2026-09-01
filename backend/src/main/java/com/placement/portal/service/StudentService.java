@@ -336,6 +336,24 @@ public class StudentService {
         return mapToDetailsResponse(profile);
     }
 
+    @Transactional
+    public com.placement.portal.dto.StudentProfileDetailsResponse updateSkills(
+            String username, java.util.List<String> skills) {
+        StudentProfile profile = getProfileByUsername(username);
+
+        java.util.List<String> cleaned = skills.stream()
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .distinct()
+                .collect(java.util.stream.Collectors.toList());
+
+        profile.getSkills().clear();
+        profile.getSkills().addAll(cleaned);
+
+        studentProfileRepository.save(profile);
+        return mapToDetailsResponse(profile);
+    }
+
     private com.placement.portal.dto.StudentProfileDetailsResponse mapToDetailsResponse(StudentProfile profile) {
         java.util.List<com.placement.portal.dto.EducationDto> education = profile.getEducation().stream()
                 .map(e -> new com.placement.portal.dto.EducationDto(
@@ -349,7 +367,8 @@ public class StudentService {
                         e.getDescription()))
                 .collect(java.util.stream.Collectors.toList());
 
-        return new com.placement.portal.dto.StudentProfileDetailsResponse(profile.getSummary(), education, experience);
+        return new com.placement.portal.dto.StudentProfileDetailsResponse(
+                profile.getSummary(), education, experience, new java.util.ArrayList<>(profile.getSkills()));
     }
 
     private StudentProfile getProfileByUsername(String username) {

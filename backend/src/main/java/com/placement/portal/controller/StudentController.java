@@ -85,6 +85,13 @@ public class StudentController {
         return ResponseEntity.ok(studentService.updateExperience(authentication.getName(), request.getExperience()));
     }
 
+    @PutMapping("/profile/skills")
+    public ResponseEntity<StudentProfileDetailsResponse> updateSkills(
+            @Valid @RequestBody SkillsUpdateRequest request,
+            Authentication authentication) {
+        return ResponseEntity.ok(studentService.updateSkills(authentication.getName(), request.getSkills()));
+    }
+
     // ========== Job Browsing ==========
 
     @GetMapping("/jobs")

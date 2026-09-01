@@ -10,9 +10,6 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class StudentProfileDetailsResponse {
-    private String summary;
-    private List<EducationDto> education = new ArrayList<>();
-    private List<ExperienceDto> experience = new ArrayList<>();
+public class SkillsUpdateRequest {
     private List<String> skills = new ArrayList<>();
 }

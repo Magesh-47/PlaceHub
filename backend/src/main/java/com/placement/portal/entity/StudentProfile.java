@@ -73,4 +73,11 @@ public class StudentProfile {
     @OrderBy("displayOrder ASC")
     @JsonIgnore
     private List<ExperienceEntry> experience = new ArrayList<>();
+
+    @ElementCollection
+    @CollectionTable(name = "student_skills", joinColumns = @JoinColumn(name = "student_id"))
+    @OrderColumn(name = "skill_order")
+    @Column(name = "skill", nullable = false)
+    @JsonIgnore
+    private List<String> skills = new ArrayList<>();
 }

@@ -259,6 +259,106 @@ const ExperienceSection = ({ experience, onSave }) => {
   );
 };
 
+const SkillsSection = ({ skills, onSave }) => {
+  const { theme } = useTheme();
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState([]);
+  const [input, setInput] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  const startEditing = () => {
+    setDraft([...skills]);
+    setInput('');
+    setEditing(true);
+  };
+
+  const addSkill = () => {
+    const value = input.trim();
+    if (value && !draft.some((s) => s.toLowerCase() === value.toLowerCase())) {
+      setDraft((prev) => [...prev, value]);
+    }
+    setInput('');
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      addSkill();
+    }
+  };
+
+  const removeSkill = (skill) => setDraft((prev) => prev.filter((s) => s !== skill));
+
+  const handleSave = async () => {
+    setSaving(true);
+    const ok = await onSave(input.trim() ? [...draft, input.trim()] : draft);
+    setSaving(false);
+    if (ok) setEditing(false);
+  };
+
+  return (
+    <div className="card" style={{ marginTop: '1.25rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', paddingBottom: '0.75rem', borderBottom: '1px solid var(--border-color)' }}>
+        <p style={{ fontWeight: 700, fontSize: '0.9375rem' }}>Skills</p>
+        {editing ? (
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <button className="btn btn-primary btn-sm" onClick={handleSave} disabled={saving}>
+              <FiCheck size={13} /> {saving ? 'Saving…' : 'Save'}
+            </button>
+            <button className="btn btn-outline btn-sm" onClick={() => setEditing(false)}>
+              <FiX size={13} /> Cancel
+            </button>
+          </div>
+        ) : (
+          <button className="btn btn-outline btn-sm" onClick={startEditing}>
+            <FiEdit2 size={13} /> Edit
+          </button>
+        )}
+      </div>
+
+      {editing ? (
+        <div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: draft.length ? '0.875rem' : 0 }}>
+            {draft.map((skill) => (
+              <span key={skill} className="badge" style={badgeColorFor(skill, theme)}>
+                {skill}
+                <button
+                  type="button"
+                  onClick={() => removeSkill(skill)}
+                  style={{ background: 'none', border: 'none', padding: 0, marginLeft: '0.25rem', cursor: 'pointer', display: 'inline-flex', color: 'inherit' }}
+                  title={`Remove ${skill}`}
+                >
+                  <FiX size={11} />
+                </button>
+              </span>
+            ))}
+          </div>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <input
+              className="form-control"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Type a skill and press Enter…"
+            />
+            <button type="button" className="btn btn-outline btn-sm" onClick={addSkill}>
+              <FiPlus size={13} /> Add
+            </button>
+          </div>
+        </div>
+      ) : skills.length === 0 ? (
+        <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>No skills added yet.</p>
+      ) : (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+          {skills.map((skill) => (
+            <span key={skill} className="badge" style={badgeColorFor(skill, theme)}>{skill}</span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const StudentProfile = () => {
   const { theme } = useTheme();
   const [profile, setProfile] = useState(null);
@@ -390,6 +490,18 @@ const StudentProfile = () => {
         ? Object.values(err.response.data.errors).join(', ')
         : err.response?.data?.message || 'Unknown error';
       toast.error('Failed to update experience: ' + msg);
+      return false;
+    }
+  };
+
+  const handleSaveSkills = async (skills) => {
+    try {
+      const res = await api.put('/student/profile/skills', { skills });
+      setDetails(res.data);
+      toast.success('Skills updated');
+      return true;
+    } catch (err) {
+      toast.error('Failed to update skills: ' + (err.response?.data?.message || err.message));
       return false;
     }
   };
@@ -559,6 +671,8 @@ const StudentProfile = () => {
       <EducationSection education={details.education || []} onSave={handleSaveEducation} />
 
       <ExperienceSection experience={details.experience || []} onSave={handleSaveExperience} />
+
+      <SkillsSection skills={details.skills || []} onSave={handleSaveSkills} />
     </div>
   );
 };
