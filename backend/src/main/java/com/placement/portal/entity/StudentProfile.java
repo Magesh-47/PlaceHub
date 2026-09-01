@@ -85,4 +85,9 @@ public class StudentProfile {
     @OrderBy("displayOrder ASC")
     @JsonIgnore
     private List<Certification> certifications = new ArrayList<>();
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("displayOrder ASC")
+    @JsonIgnore
+    private List<ProfileLink> links = new ArrayList<>();
 }

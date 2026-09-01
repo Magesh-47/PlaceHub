@@ -4,7 +4,7 @@ import Loader from '../../components/Loader';
 import PageHeader from '../../components/PageHeader';
 import { toast } from 'react-toastify';
 import { FiEdit2, FiCheck, FiX, FiTrash2, FiPlus } from 'react-icons/fi';
-import { FaUser } from 'react-icons/fa';
+import { FaUser, FaGithub, FaLinkedin, FaGlobe, FaLink } from 'react-icons/fa';
 import { avatarGradientFor, badgeColorFor } from '../../utils/colors';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -473,6 +473,120 @@ const CertificationSection = ({ certifications, onSave }) => {
   );
 };
 
+const LINK_SUGGESTIONS = ['Portfolio', 'GitHub', 'LinkedIn'];
+const EMPTY_LINK = { label: '', url: '' };
+
+const linkIconFor = (label) => {
+  const key = (label || '').toLowerCase();
+  if (key.includes('github')) return <FaGithub size={13} />;
+  if (key.includes('linkedin')) return <FaLinkedin size={13} />;
+  if (key.includes('portfolio') || key.includes('website')) return <FaGlobe size={13} />;
+  return <FaLink size={13} />;
+};
+
+const LinksSection = ({ links, onSave }) => {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState([]);
+  const [saving, setSaving] = useState(false);
+
+  const startEditing = () => {
+    setDraft(links.length ? links.map((l) => ({ ...l })) : [{ ...EMPTY_LINK }]);
+    setEditing(true);
+  };
+
+  const updateEntry = (index, field, value) => {
+    setDraft((prev) => prev.map((l, i) => (i === index ? { ...l, [field]: value } : l)));
+  };
+
+  const removeEntry = (index) => setDraft((prev) => prev.filter((_, i) => i !== index));
+  const addEntry = () => setDraft((prev) => [...prev, { ...EMPTY_LINK }]);
+
+  const handleSave = async () => {
+    setSaving(true);
+    const cleaned = draft.filter((l) => l.label.trim() && l.url.trim());
+    const ok = await onSave(cleaned);
+    setSaving(false);
+    if (ok) setEditing(false);
+  };
+
+  return (
+    <div className="card" style={{ marginTop: '1.25rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', paddingBottom: '0.75rem', borderBottom: '1px solid var(--border-color)' }}>
+        <p style={{ fontWeight: 700, fontSize: '0.9375rem' }}>Links</p>
+        {editing ? (
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <button className="btn btn-primary btn-sm" onClick={handleSave} disabled={saving}>
+              <FiCheck size={13} /> {saving ? 'Saving…' : 'Save'}
+            </button>
+            <button className="btn btn-outline btn-sm" onClick={() => setEditing(false)}>
+              <FiX size={13} /> Cancel
+            </button>
+          </div>
+        ) : (
+          <button className="btn btn-outline btn-sm" onClick={startEditing}>
+            <FiEdit2 size={13} /> Edit
+          </button>
+        )}
+      </div>
+
+      {editing ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <datalist id="link-label-suggestions">
+            {LINK_SUGGESTIONS.map((s) => <option key={s} value={s} />)}
+          </datalist>
+          {draft.map((entry, i) => (
+            <div key={i} style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+              <input
+                className="form-control"
+                style={{ maxWidth: '10rem' }}
+                list="link-label-suggestions"
+                value={entry.label}
+                onChange={(e) => updateEntry(i, 'label', e.target.value)}
+                placeholder="Label"
+              />
+              <input
+                type="url"
+                className="form-control"
+                value={entry.url}
+                onChange={(e) => updateEntry(i, 'url', e.target.value)}
+                placeholder="https://…"
+              />
+              <button
+                type="button"
+                onClick={() => removeEntry(i)}
+                className="icon-btn danger"
+                title="Remove link"
+              >
+                <FiTrash2 size={14} />
+              </button>
+            </div>
+          ))}
+          <button type="button" className="btn btn-outline btn-sm" onClick={addEntry} style={{ alignSelf: 'flex-start' }}>
+            <FiPlus size={13} /> Add Link
+          </button>
+        </div>
+      ) : links.length === 0 ? (
+        <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>No links added yet.</p>
+      ) : (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.625rem' }}>
+          {links.map((entry, i) => (
+            <a
+              key={entry.id ?? i}
+              href={entry.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-outline btn-sm"
+              style={{ textDecoration: 'none' }}
+            >
+              {linkIconFor(entry.label)} {entry.label}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const StudentProfile = () => {
   const { theme } = useTheme();
   const [profile, setProfile] = useState(null);
@@ -638,6 +752,22 @@ const StudentProfile = () => {
         ? Object.values(err.response.data.errors).join(', ')
         : err.response?.data?.message || 'Unknown error';
       toast.error('Failed to update certifications: ' + msg);
+      return false;
+    }
+  };
+
+  const handleSaveLinks = async (entries) => {
+    try {
+      const payload = entries.map((l) => ({ label: l.label, url: l.url }));
+      const res = await api.put('/student/profile/links', { links: payload });
+      setDetails(res.data);
+      toast.success('Links updated');
+      return true;
+    } catch (err) {
+      const msg = err.response?.data?.errors
+        ? Object.values(err.response.data.errors).join(', ')
+        : err.response?.data?.message || 'Unknown error';
+      toast.error('Failed to update links: ' + msg);
       return false;
     }
   };
@@ -811,6 +941,8 @@ const StudentProfile = () => {
       <SkillsSection skills={details.skills || []} onSave={handleSaveSkills} />
 
       <CertificationSection certifications={details.certifications || []} onSave={handleSaveCertifications} />
+
+      <LinksSection links={details.links || []} onSave={handleSaveLinks} />
     </div>
   );
 };

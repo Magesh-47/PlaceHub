@@ -377,6 +377,26 @@ public class StudentService {
         return mapToDetailsResponse(profile);
     }
 
+    @Transactional
+    public com.placement.portal.dto.StudentProfileDetailsResponse updateLinks(
+            String username, java.util.List<com.placement.portal.dto.ProfileLinkDto> entries) {
+        StudentProfile profile = getProfileByUsername(username);
+
+        profile.getLinks().clear();
+        int order = 0;
+        for (com.placement.portal.dto.ProfileLinkDto dto : entries) {
+            com.placement.portal.entity.ProfileLink link = new com.placement.portal.entity.ProfileLink();
+            link.setStudent(profile);
+            link.setLabel(dto.getLabel());
+            link.setUrl(dto.getUrl());
+            link.setDisplayOrder(order++);
+            profile.getLinks().add(link);
+        }
+
+        studentProfileRepository.save(profile);
+        return mapToDetailsResponse(profile);
+    }
+
     private com.placement.portal.dto.StudentProfileDetailsResponse mapToDetailsResponse(StudentProfile profile) {
         java.util.List<com.placement.portal.dto.EducationDto> education = profile.getEducation().stream()
                 .map(e -> new com.placement.portal.dto.EducationDto(
@@ -396,9 +416,13 @@ public class StudentService {
                         c.getCredentialUrl()))
                 .collect(java.util.stream.Collectors.toList());
 
+        java.util.List<com.placement.portal.dto.ProfileLinkDto> links = profile.getLinks().stream()
+                .map(l -> new com.placement.portal.dto.ProfileLinkDto(l.getId(), l.getLabel(), l.getUrl()))
+                .collect(java.util.stream.Collectors.toList());
+
         return new com.placement.portal.dto.StudentProfileDetailsResponse(
                 profile.getSummary(), education, experience, new java.util.ArrayList<>(profile.getSkills()),
-                certifications);
+                certifications, links);
     }
 
     private StudentProfile getProfileByUsername(String username) {

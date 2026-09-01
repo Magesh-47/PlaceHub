@@ -99,6 +99,13 @@ public class StudentController {
         return ResponseEntity.ok(studentService.updateCertifications(authentication.getName(), request.getCertifications()));
     }
 
+    @PutMapping("/profile/links")
+    public ResponseEntity<StudentProfileDetailsResponse> updateLinks(
+            @Valid @RequestBody ProfileLinkListRequest request,
+            Authentication authentication) {
+        return ResponseEntity.ok(studentService.updateLinks(authentication.getName(), request.getLinks()));
+    }
+
     // ========== Job Browsing ==========
 
     @GetMapping("/jobs")

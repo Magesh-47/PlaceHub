@@ -16,4 +16,5 @@ public class StudentProfileDetailsResponse {
     private List<ExperienceDto> experience = new ArrayList<>();
     private List<String> skills = new ArrayList<>();
     private List<CertificationDto> certifications = new ArrayList<>();
+    private List<ProfileLinkDto> links = new ArrayList<>();
 }
