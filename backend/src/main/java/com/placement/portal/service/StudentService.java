@@ -275,4 +275,23 @@ public class StudentService {
         userRepository.save(user);
         return mapToResponse(user);
     }
+
+    public com.placement.portal.dto.StudentProfileDetailsResponse getProfileDetails(String username) {
+        StudentProfile profile = getProfileByUsername(username);
+        return new com.placement.portal.dto.StudentProfileDetailsResponse(profile.getSummary());
+    }
+
+    @Transactional
+    public com.placement.portal.dto.StudentProfileDetailsResponse updateSummary(String username, String summary) {
+        StudentProfile profile = getProfileByUsername(username);
+        profile.setSummary(summary);
+        studentProfileRepository.save(profile);
+        return new com.placement.portal.dto.StudentProfileDetailsResponse(profile.getSummary());
+    }
+
+    private StudentProfile getProfileByUsername(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
+        return user.getStudentProfile();
+    }
 }

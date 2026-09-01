@@ -43,6 +43,9 @@ public class StudentProfile {
     @Column
     private java.time.LocalDate dateOfBirth;
 
+    @Column(length = 2000)
+    private String summary;
+
     @Column(name = "profile_picture", columnDefinition = "bytea")
     @JdbcTypeCode(SqlTypes.BINARY)
     @JsonIgnore

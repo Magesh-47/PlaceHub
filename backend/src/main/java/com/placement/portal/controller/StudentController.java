@@ -59,6 +59,18 @@ public class StudentController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/profile/details")
+    public ResponseEntity<StudentProfileDetailsResponse> getProfileDetails(Authentication authentication) {
+        return ResponseEntity.ok(studentService.getProfileDetails(authentication.getName()));
+    }
+
+    @PutMapping("/profile/summary")
+    public ResponseEntity<StudentProfileDetailsResponse> updateSummary(
+            @Valid @RequestBody SummaryUpdateRequest request,
+            Authentication authentication) {
+        return ResponseEntity.ok(studentService.updateSummary(authentication.getName(), request.getSummary()));
+    }
+
     // ========== Job Browsing ==========
 
     @GetMapping("/jobs")

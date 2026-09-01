@@ -27,6 +27,7 @@ const ReadOnly = ({ value }) => (
 const StudentProfile = () => {
   const { theme } = useTheme();
   const [profile, setProfile] = useState(null);
+  const [details, setDetails] = useState({ summary: '' });
   const [loading, setLoading] = useState(true);
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState(null);
@@ -48,11 +49,12 @@ const StudentProfile = () => {
   };
 
   useEffect(() => {
-    api.get('/student/profile')
-      .then((r) => {
-        setProfile(r.data);
-        setFormData(r.data);
-        if (r.data.hasProfilePicture) loadAvatar(r.data.userId);
+    Promise.all([api.get('/student/profile'), api.get('/student/profile/details')])
+      .then(([profileRes, detailsRes]) => {
+        setProfile(profileRes.data);
+        setDetails(detailsRes.data);
+        setFormData({ ...profileRes.data, summary: detailsRes.data.summary || '' });
+        if (profileRes.data.hasProfilePicture) loadAvatar(profileRes.data.userId);
       })
       .catch(() => toast.error('Failed to load profile'))
       .finally(() => setLoading(false));
@@ -92,8 +94,12 @@ const StudentProfile = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const res = await api.put('/student/profile', formData);
-      setProfile(res.data);
+      const [profileRes, detailsRes] = await Promise.all([
+        api.put('/student/profile', formData),
+        api.put('/student/profile/summary', { summary: formData.summary }),
+      ]);
+      setProfile(profileRes.data);
+      setDetails(detailsRes.data);
       toast.success('Profile updated successfully');
       setEditMode(false);
     } catch {
@@ -103,7 +109,7 @@ const StudentProfile = () => {
   };
 
   const handleCancel = () => {
-    setFormData(profile);
+    setFormData({ ...profile, summary: details.summary || '' });
     setPreview(null);
     setEditMode(false);
   };
@@ -242,6 +248,32 @@ const StudentProfile = () => {
             </Field>
           </div>
         </div>
+      </div>
+
+      {/* Professional Summary */}
+      <div className="card" style={{ marginTop: '1.25rem' }}>
+        <p style={{ fontWeight: 700, fontSize: '0.9375rem', marginBottom: '1.25rem', paddingBottom: '0.75rem', borderBottom: '1px solid var(--border-color)' }}>
+          Professional Summary
+        </p>
+
+        {editMode ? (
+          <textarea
+            className="form-control"
+            rows={4}
+            maxLength={2000}
+            placeholder="A short summary of your background, interests, and what you're looking for…"
+            value={formData.summary || ''}
+            onChange={ch('summary')}
+          />
+        ) : details.summary ? (
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-main)', lineHeight: 1.65, whiteSpace: 'pre-wrap' }}>
+            {details.summary}
+          </p>
+        ) : (
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+            No summary added yet. Click "Edit Profile" to introduce yourself to recruiters.
+          </p>
+        )}
       </div>
     </div>
   );
