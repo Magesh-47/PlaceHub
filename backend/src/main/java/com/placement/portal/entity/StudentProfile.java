@@ -80,4 +80,9 @@ public class StudentProfile {
     @Column(name = "skill", nullable = false)
     @JsonIgnore
     private List<String> skills = new ArrayList<>();
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("displayOrder ASC")
+    @JsonIgnore
+    private List<Certification> certifications = new ArrayList<>();
 }

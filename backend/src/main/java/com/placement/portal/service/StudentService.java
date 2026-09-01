@@ -354,6 +354,29 @@ public class StudentService {
         return mapToDetailsResponse(profile);
     }
 
+    @Transactional
+    public com.placement.portal.dto.StudentProfileDetailsResponse updateCertifications(
+            String username, java.util.List<com.placement.portal.dto.CertificationDto> entries) {
+        StudentProfile profile = getProfileByUsername(username);
+
+        profile.getCertifications().clear();
+        int order = 0;
+        for (com.placement.portal.dto.CertificationDto dto : entries) {
+            com.placement.portal.entity.Certification cert = new com.placement.portal.entity.Certification();
+            cert.setStudent(profile);
+            cert.setName(dto.getName());
+            cert.setIssuingOrganization(dto.getIssuingOrganization());
+            cert.setIssueDate(dto.getIssueDate());
+            cert.setExpiryDate(dto.getExpiryDate());
+            cert.setCredentialUrl(dto.getCredentialUrl());
+            cert.setDisplayOrder(order++);
+            profile.getCertifications().add(cert);
+        }
+
+        studentProfileRepository.save(profile);
+        return mapToDetailsResponse(profile);
+    }
+
     private com.placement.portal.dto.StudentProfileDetailsResponse mapToDetailsResponse(StudentProfile profile) {
         java.util.List<com.placement.portal.dto.EducationDto> education = profile.getEducation().stream()
                 .map(e -> new com.placement.portal.dto.EducationDto(
@@ -367,8 +390,15 @@ public class StudentService {
                         e.getDescription()))
                 .collect(java.util.stream.Collectors.toList());
 
+        java.util.List<com.placement.portal.dto.CertificationDto> certifications = profile.getCertifications().stream()
+                .map(c -> new com.placement.portal.dto.CertificationDto(
+                        c.getId(), c.getName(), c.getIssuingOrganization(), c.getIssueDate(), c.getExpiryDate(),
+                        c.getCredentialUrl()))
+                .collect(java.util.stream.Collectors.toList());
+
         return new com.placement.portal.dto.StudentProfileDetailsResponse(
-                profile.getSummary(), education, experience, new java.util.ArrayList<>(profile.getSkills()));
+                profile.getSummary(), education, experience, new java.util.ArrayList<>(profile.getSkills()),
+                certifications);
     }
 
     private StudentProfile getProfileByUsername(String username) {

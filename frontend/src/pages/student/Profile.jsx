@@ -359,6 +359,120 @@ const SkillsSection = ({ skills, onSave }) => {
   );
 };
 
+const EMPTY_CERTIFICATION = { name: '', issuingOrganization: '', issueDate: '', expiryDate: '', credentialUrl: '' };
+
+const CertificationSection = ({ certifications, onSave }) => {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState([]);
+  const [saving, setSaving] = useState(false);
+
+  const startEditing = () => {
+    setDraft(certifications.length ? certifications.map((c) => ({ ...c })) : [{ ...EMPTY_CERTIFICATION }]);
+    setEditing(true);
+  };
+
+  const updateEntry = (index, field, value) => {
+    setDraft((prev) => prev.map((c, i) => (i === index ? { ...c, [field]: value } : c)));
+  };
+
+  const removeEntry = (index) => setDraft((prev) => prev.filter((_, i) => i !== index));
+  const addEntry = () => setDraft((prev) => [...prev, { ...EMPTY_CERTIFICATION }]);
+
+  const handleSave = async () => {
+    setSaving(true);
+    const cleaned = draft.filter((c) => c.name.trim() || c.issuingOrganization.trim());
+    const ok = await onSave(cleaned);
+    setSaving(false);
+    if (ok) setEditing(false);
+  };
+
+  return (
+    <div className="card" style={{ marginTop: '1.25rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', paddingBottom: '0.75rem', borderBottom: '1px solid var(--border-color)' }}>
+        <p style={{ fontWeight: 700, fontSize: '0.9375rem' }}>Certifications</p>
+        {editing ? (
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <button className="btn btn-primary btn-sm" onClick={handleSave} disabled={saving}>
+              <FiCheck size={13} /> {saving ? 'Saving…' : 'Save'}
+            </button>
+            <button className="btn btn-outline btn-sm" onClick={() => setEditing(false)}>
+              <FiX size={13} /> Cancel
+            </button>
+          </div>
+        ) : (
+          <button className="btn btn-outline btn-sm" onClick={startEditing}>
+            <FiEdit2 size={13} /> Edit
+          </button>
+        )}
+      </div>
+
+      {editing ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {draft.map((entry, i) => (
+            <div key={i} style={{ border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '1rem', position: 'relative' }}>
+              <button
+                type="button"
+                onClick={() => removeEntry(i)}
+                className="icon-btn danger"
+                style={{ position: 'absolute', top: '0.5rem', right: '0.5rem' }}
+                title="Remove entry"
+              >
+                <FiTrash2 size={14} />
+              </button>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 1rem', paddingRight: '2.5rem' }}>
+                <Field label="Certification Name">
+                  <input className="form-control" value={entry.name} onChange={(e) => updateEntry(i, 'name', e.target.value)} placeholder="e.g. AWS Certified Developer" />
+                </Field>
+                <Field label="Issuing Organization">
+                  <input className="form-control" value={entry.issuingOrganization} onChange={(e) => updateEntry(i, 'issuingOrganization', e.target.value)} placeholder="e.g. Amazon Web Services" />
+                </Field>
+                <Field label="Issue Date">
+                  <input type="date" className="form-control" value={entry.issueDate || ''} onChange={(e) => updateEntry(i, 'issueDate', e.target.value)} />
+                </Field>
+                <Field label="Expiry Date">
+                  <input type="date" className="form-control" value={entry.expiryDate || ''} onChange={(e) => updateEntry(i, 'expiryDate', e.target.value)} placeholder="Leave blank if it doesn't expire" />
+                </Field>
+                <div style={{ gridColumn: '1 / -1' }}>
+                  <Field label="Credential URL">
+                    <input type="url" className="form-control" value={entry.credentialUrl || ''} onChange={(e) => updateEntry(i, 'credentialUrl', e.target.value)} placeholder="https://…" />
+                  </Field>
+                </div>
+              </div>
+            </div>
+          ))}
+          <button type="button" className="btn btn-outline btn-sm" onClick={addEntry} style={{ alignSelf: 'flex-start' }}>
+            <FiPlus size={13} /> Add Certification
+          </button>
+        </div>
+      ) : certifications.length === 0 ? (
+        <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>No certifications added yet.</p>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
+          {certifications.map((entry, i) => (
+            <div
+              key={entry.id ?? i}
+              style={{ paddingBottom: '0.875rem', borderBottom: i < certifications.length - 1 ? '1px solid var(--border-color)' : 'none' }}
+            >
+              <p style={{ fontWeight: 600, fontSize: '0.875rem' }}>
+                {entry.credentialUrl
+                  ? <a href={entry.credentialUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary-color)' }}>{entry.name}</a>
+                  : entry.name}
+              </p>
+              <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>{entry.issuingOrganization}</p>
+              {(entry.issueDate || entry.expiryDate) && (
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                  {entry.issueDate ? `Issued ${formatMonthYear(entry.issueDate)}` : ''}
+                  {entry.expiryDate ? ` · Expires ${formatMonthYear(entry.expiryDate)}` : ''}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const StudentProfile = () => {
   const { theme } = useTheme();
   const [profile, setProfile] = useState(null);
@@ -502,6 +616,28 @@ const StudentProfile = () => {
       return true;
     } catch (err) {
       toast.error('Failed to update skills: ' + (err.response?.data?.message || err.message));
+      return false;
+    }
+  };
+
+  const handleSaveCertifications = async (entries) => {
+    try {
+      const payload = entries.map((c) => ({
+        name: c.name,
+        issuingOrganization: c.issuingOrganization,
+        issueDate: c.issueDate || null,
+        expiryDate: c.expiryDate || null,
+        credentialUrl: c.credentialUrl || null,
+      }));
+      const res = await api.put('/student/profile/certifications', { certifications: payload });
+      setDetails(res.data);
+      toast.success('Certifications updated');
+      return true;
+    } catch (err) {
+      const msg = err.response?.data?.errors
+        ? Object.values(err.response.data.errors).join(', ')
+        : err.response?.data?.message || 'Unknown error';
+      toast.error('Failed to update certifications: ' + msg);
       return false;
     }
   };
@@ -673,6 +809,8 @@ const StudentProfile = () => {
       <ExperienceSection experience={details.experience || []} onSave={handleSaveExperience} />
 
       <SkillsSection skills={details.skills || []} onSave={handleSaveSkills} />
+
+      <CertificationSection certifications={details.certifications || []} onSave={handleSaveCertifications} />
     </div>
   );
 };
