@@ -313,6 +313,29 @@ public class StudentService {
         return mapToDetailsResponse(profile);
     }
 
+    @Transactional
+    public com.placement.portal.dto.StudentProfileDetailsResponse updateExperience(
+            String username, java.util.List<com.placement.portal.dto.ExperienceDto> entries) {
+        StudentProfile profile = getProfileByUsername(username);
+
+        profile.getExperience().clear();
+        int order = 0;
+        for (com.placement.portal.dto.ExperienceDto dto : entries) {
+            com.placement.portal.entity.ExperienceEntry entry = new com.placement.portal.entity.ExperienceEntry();
+            entry.setStudent(profile);
+            entry.setCompanyName(dto.getCompanyName());
+            entry.setRole(dto.getRole());
+            entry.setStartDate(dto.getStartDate());
+            entry.setEndDate(dto.getEndDate());
+            entry.setDescription(dto.getDescription());
+            entry.setDisplayOrder(order++);
+            profile.getExperience().add(entry);
+        }
+
+        studentProfileRepository.save(profile);
+        return mapToDetailsResponse(profile);
+    }
+
     private com.placement.portal.dto.StudentProfileDetailsResponse mapToDetailsResponse(StudentProfile profile) {
         java.util.List<com.placement.portal.dto.EducationDto> education = profile.getEducation().stream()
                 .map(e -> new com.placement.portal.dto.EducationDto(
@@ -320,7 +343,13 @@ public class StudentService {
                         e.getStartYear(), e.getEndYear(), e.getGradeOrScore()))
                 .collect(java.util.stream.Collectors.toList());
 
-        return new com.placement.portal.dto.StudentProfileDetailsResponse(profile.getSummary(), education);
+        java.util.List<com.placement.portal.dto.ExperienceDto> experience = profile.getExperience().stream()
+                .map(e -> new com.placement.portal.dto.ExperienceDto(
+                        e.getId(), e.getCompanyName(), e.getRole(), e.getStartDate(), e.getEndDate(),
+                        e.getDescription()))
+                .collect(java.util.stream.Collectors.toList());
+
+        return new com.placement.portal.dto.StudentProfileDetailsResponse(profile.getSummary(), education, experience);
     }
 
     private StudentProfile getProfileByUsername(String username) {

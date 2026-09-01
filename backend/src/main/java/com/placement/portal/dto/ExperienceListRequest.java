@@ -1,5 +1,6 @@
 package com.placement.portal.dto;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,8 +11,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class StudentProfileDetailsResponse {
-    private String summary;
-    private List<EducationDto> education = new ArrayList<>();
+public class ExperienceListRequest {
+
+    @Valid
     private List<ExperienceDto> experience = new ArrayList<>();
 }

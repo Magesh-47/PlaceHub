@@ -135,6 +135,130 @@ const EducationSection = ({ education, onSave }) => {
   );
 };
 
+const EMPTY_EXPERIENCE = { companyName: '', role: '', startDate: '', endDate: '', description: '' };
+
+const formatMonthYear = (iso) => {
+  if (!iso) return null;
+  const d = new Date(iso + 'T00:00:00');
+  return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+};
+
+const ExperienceSection = ({ experience, onSave }) => {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState([]);
+  const [saving, setSaving] = useState(false);
+
+  const startEditing = () => {
+    setDraft(experience.length ? experience.map((e) => ({ ...e })) : [{ ...EMPTY_EXPERIENCE }]);
+    setEditing(true);
+  };
+
+  const updateEntry = (index, field, value) => {
+    setDraft((prev) => prev.map((e, i) => (i === index ? { ...e, [field]: value } : e)));
+  };
+
+  const removeEntry = (index) => setDraft((prev) => prev.filter((_, i) => i !== index));
+  const addEntry = () => setDraft((prev) => [...prev, { ...EMPTY_EXPERIENCE }]);
+
+  const handleSave = async () => {
+    setSaving(true);
+    const cleaned = draft.filter((e) => e.companyName.trim() || e.role.trim());
+    const ok = await onSave(cleaned);
+    setSaving(false);
+    if (ok) setEditing(false);
+  };
+
+  return (
+    <div className="card" style={{ marginTop: '1.25rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', paddingBottom: '0.75rem', borderBottom: '1px solid var(--border-color)' }}>
+        <p style={{ fontWeight: 700, fontSize: '0.9375rem' }}>Experience</p>
+        {editing ? (
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <button className="btn btn-primary btn-sm" onClick={handleSave} disabled={saving}>
+              <FiCheck size={13} /> {saving ? 'Saving…' : 'Save'}
+            </button>
+            <button className="btn btn-outline btn-sm" onClick={() => setEditing(false)}>
+              <FiX size={13} /> Cancel
+            </button>
+          </div>
+        ) : (
+          <button className="btn btn-outline btn-sm" onClick={startEditing}>
+            <FiEdit2 size={13} /> Edit
+          </button>
+        )}
+      </div>
+
+      {editing ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {draft.map((entry, i) => (
+            <div key={i} style={{ border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '1rem', position: 'relative' }}>
+              <button
+                type="button"
+                onClick={() => removeEntry(i)}
+                className="icon-btn danger"
+                style={{ position: 'absolute', top: '0.5rem', right: '0.5rem' }}
+                title="Remove entry"
+              >
+                <FiTrash2 size={14} />
+              </button>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 1rem', paddingRight: '2.5rem' }}>
+                <Field label="Company">
+                  <input className="form-control" value={entry.companyName} onChange={(e) => updateEntry(i, 'companyName', e.target.value)} />
+                </Field>
+                <Field label="Role">
+                  <input className="form-control" value={entry.role} onChange={(e) => updateEntry(i, 'role', e.target.value)} placeholder="e.g. Software Engineering Intern" />
+                </Field>
+                <Field label="Start Date">
+                  <input type="date" className="form-control" value={entry.startDate || ''} onChange={(e) => updateEntry(i, 'startDate', e.target.value)} />
+                </Field>
+                <Field label="End Date">
+                  <input type="date" className="form-control" value={entry.endDate || ''} onChange={(e) => updateEntry(i, 'endDate', e.target.value)} placeholder="Leave blank if current" />
+                </Field>
+                <div style={{ gridColumn: '1 / -1' }}>
+                  <Field label="Description">
+                    <textarea
+                      className="form-control"
+                      rows={3}
+                      value={entry.description || ''}
+                      onChange={(e) => updateEntry(i, 'description', e.target.value)}
+                      placeholder="What did you work on?"
+                    />
+                  </Field>
+                </div>
+              </div>
+            </div>
+          ))}
+          <button type="button" className="btn btn-outline btn-sm" onClick={addEntry} style={{ alignSelf: 'flex-start' }}>
+            <FiPlus size={13} /> Add Experience
+          </button>
+        </div>
+      ) : experience.length === 0 ? (
+        <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>No experience added yet.</p>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
+          {experience.map((entry, i) => (
+            <div
+              key={entry.id ?? i}
+              style={{ paddingBottom: '0.875rem', borderBottom: i < experience.length - 1 ? '1px solid var(--border-color)' : 'none' }}
+            >
+              <p style={{ fontWeight: 600, fontSize: '0.875rem' }}>{entry.role}</p>
+              <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>{entry.companyName}</p>
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                {formatMonthYear(entry.startDate) || '—'} – {formatMonthYear(entry.endDate) || 'Present'}
+              </p>
+              {entry.description && (
+                <p style={{ fontSize: '0.8125rem', color: 'var(--text-main)', marginTop: '0.375rem', lineHeight: 1.55, whiteSpace: 'pre-wrap' }}>
+                  {entry.description}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const StudentProfile = () => {
   const { theme } = useTheme();
   const [profile, setProfile] = useState(null);
@@ -244,6 +368,28 @@ const StudentProfile = () => {
         ? Object.values(err.response.data.errors).join(', ')
         : err.response?.data?.message || 'Unknown error';
       toast.error('Failed to update education: ' + msg);
+      return false;
+    }
+  };
+
+  const handleSaveExperience = async (entries) => {
+    try {
+      const payload = entries.map((e) => ({
+        companyName: e.companyName,
+        role: e.role,
+        startDate: e.startDate || null,
+        endDate: e.endDate || null,
+        description: e.description || null,
+      }));
+      const res = await api.put('/student/profile/experience', { experience: payload });
+      setDetails(res.data);
+      toast.success('Experience updated');
+      return true;
+    } catch (err) {
+      const msg = err.response?.data?.errors
+        ? Object.values(err.response.data.errors).join(', ')
+        : err.response?.data?.message || 'Unknown error';
+      toast.error('Failed to update experience: ' + msg);
       return false;
     }
   };
@@ -411,6 +557,8 @@ const StudentProfile = () => {
       </div>
 
       <EducationSection education={details.education || []} onSave={handleSaveEducation} />
+
+      <ExperienceSection experience={details.experience || []} onSave={handleSaveExperience} />
     </div>
   );
 };
