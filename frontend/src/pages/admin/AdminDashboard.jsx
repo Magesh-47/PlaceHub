@@ -4,37 +4,11 @@ import { useTheme } from '../../context/ThemeContext';
 import api from '../../services/api';
 import Loader from '../../components/Loader';
 import { avatarGradientFor, badgeColorFor } from '../../utils/colors';
+import { daysUntil, relTime, STATUS_TONE } from '../../utils/dates';
 import {
   FiUsers, FiBriefcase, FiFileText, FiTrendingUp,
   FiAlertTriangle, FiClock, FiAward,
 } from 'react-icons/fi';
-
-/* whole days from today until an ISO date (negative = already past) */
-const daysUntil = (iso) => {
-  if (!iso) return null;
-  const d = new Date(iso + 'T00:00:00');
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return Math.round((d - today) / 86400000);
-};
-
-const relTime = (iso) => {
-  if (!iso) return '—';
-  const mins = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
-  if (mins < 1) return 'just now';
-  if (mins < 60) return mins + 'm ago';
-  const h = Math.floor(mins / 60);
-  if (h < 24) return h + 'h ago';
-  const d = Math.floor(h / 24);
-  return d === 1 ? 'yesterday' : d + 'd ago';
-};
-
-const STATUS_TONE = {
-  ACCEPTED:  'success',
-  REJECTED:  'danger',
-  PENDING:   'warning',
-  SUBMITTED: 'info',
-};
 
 const AdminDashboard = () => {
   const { user } = useAuth();
