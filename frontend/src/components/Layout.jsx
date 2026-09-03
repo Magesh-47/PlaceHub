@@ -6,8 +6,41 @@ import api from '../services/api';
 import { toast } from 'react-toastify';
 import Sidebar from './Sidebar';
 import { MdLightMode, MdDarkMode } from 'react-icons/md';
-import { FiLogOut, FiKey, FiMenu, FiX } from 'react-icons/fi';
+import { FiLogOut, FiKey, FiMenu, FiX, FiEye, FiEyeOff } from 'react-icons/fi';
 import { avatarGradientFor } from '../utils/colors';
+
+const PasswordInput = ({ value, onChange, autoFocus, placeholder, required, disabled }) => {
+  const [visible, setVisible] = useState(false);
+  return (
+    <div style={{ position: 'relative' }}>
+      <input
+        type={visible ? 'text' : 'password'}
+        className="form-control"
+        style={{ paddingRight: '2.5rem' }}
+        value={value}
+        onChange={onChange}
+        autoFocus={autoFocus}
+        placeholder={placeholder}
+        required={required}
+        disabled={disabled}
+      />
+      <button
+        type="button"
+        onClick={() => setVisible((v) => !v)}
+        disabled={disabled}
+        aria-label={visible ? 'Hide password' : 'Show password'}
+        title={visible ? 'Hide password' : 'Show password'}
+        style={{
+          position: 'absolute', right: '0.75rem', top: '50%', transform: 'translateY(-50%)',
+          background: 'none', border: 'none', padding: 0, cursor: disabled ? 'default' : 'pointer',
+          display: 'flex', alignItems: 'center', color: 'var(--text-muted)',
+        }}
+      >
+        {visible ? <FiEyeOff size={15} /> : <FiEye size={15} />}
+      </button>
+    </div>
+  );
+};
 
 /* ─── Layout ─────────────────────────────────────────────── */
 const Layout = () => {
@@ -232,9 +265,7 @@ const Layout = () => {
               ) : (
                 <div className="form-group">
                   <label className="form-label">Current Password</label>
-                  <input
-                    type="password"
-                    className="form-control"
+                  <PasswordInput
                     value={pwData.currentPassword}
                     onChange={(e) => setPwData({ ...pwData, currentPassword: e.target.value })}
                     required
@@ -245,9 +276,7 @@ const Layout = () => {
 
               <div className="form-group">
                 <label className="form-label">New Password</label>
-                <input
-                  type="password"
-                  className="form-control"
+                <PasswordInput
                   value={pwData.newPassword}
                   onChange={(e) => setPwData({ ...pwData, newPassword: e.target.value })}
                   placeholder="Min 8 characters"
