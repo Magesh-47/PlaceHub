@@ -799,18 +799,18 @@ const StudentProfile = () => {
         }
       />
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.25rem', alignItems: 'start' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.25rem', alignItems: 'stretch' }}>
         {/* Avatar card */}
-        <div className="card" style={{ textAlign: 'center', padding: '2rem 1.5rem' }}>
+        <div className="card" style={{ textAlign: 'center', padding: '2rem 1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <div
             style={{
-              width: 88, height: 88,
+              width: 160, height: 160,
               borderRadius: '50%',
               background: (preview || avatarUrl) ? 'transparent' : avatarGradientFor(profile.username || profile.fullName),
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              margin: '0 auto 1rem',
+              margin: '0 auto 1.25rem',
               overflow: 'hidden',
-              fontSize: '1.75rem', fontWeight: 800, color: '#fff',
+              fontSize: '3rem', fontWeight: 800, color: '#fff',
               flexShrink: 0,
             }}
           >
