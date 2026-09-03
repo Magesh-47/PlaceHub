@@ -12,6 +12,7 @@ import StudentDashboard from './pages/student/StudentDashboard';
 import StudentJobs from './pages/student/Jobs';
 import StudentProfile from './pages/student/Profile';
 import StudentApplications from './pages/student/Applications';
+import NotFound from './pages/NotFound';
 import { ProtectedRoute } from './components/Layout';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ToastContainer, Bounce } from 'react-toastify';
@@ -45,6 +46,9 @@ function App() {
 
           {/* Default Redirect */}
           <Route path="/" element={<Navigate to="/login" replace />} />
+
+          {/* Catch-all */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
           </ErrorBoundary>
         </AuthProvider>
