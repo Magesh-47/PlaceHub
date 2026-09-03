@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
-import { ThemeProvider } from './context/ThemeContext';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
 import Login from './pages/auth/Login';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminStudents from './pages/admin/Students';
@@ -17,6 +17,17 @@ import { ProtectedRoute } from './components/Layout';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ToastContainer, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+// react-toastify v9 supplies these via ToastContainer.defaultProps, which React 19's
+// JSX runtime no longer applies — pass them explicitly or `transition` is undefined
+// and the first toast crashes the app.
+const ThemedToastContainer = () => {
+  const { theme } = useTheme();
+  return (
+    <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover
+      transition={Bounce} theme={theme} role="alert" draggablePercent={80} draggableDirection="x" />
+  );
+};
 
 function App() {
   return (
@@ -52,12 +63,8 @@ function App() {
         </Routes>
           </ErrorBoundary>
         </AuthProvider>
+        <ThemedToastContainer />
       </ThemeProvider>
-      {/* react-toastify v9 supplies these via ToastContainer.defaultProps, which React 19's
-          JSX runtime no longer applies — pass them explicitly or `transition` is undefined
-          and the first toast crashes the app. */}
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover
-        transition={Bounce} theme="light" role="alert" draggablePercent={80} draggableDirection="x" />
     </BrowserRouter>
   );
 }
