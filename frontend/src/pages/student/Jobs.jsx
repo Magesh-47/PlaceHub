@@ -256,7 +256,7 @@ const StudentJobs = () => {
                 <h3 className="modal-title">{selectedJob.jobRole}</h3>
                 <p style={{ fontSize: '0.875rem', color: 'var(--primary-color)', fontWeight: 600 }}>{selectedJob.companyName}</p>
               </div>
-              <button className="modal-close" onClick={() => setShowModal(false)}>×</button>
+              <button className="modal-close" onClick={() => setShowModal(false)} aria-label="Close">×</button>
             </div>
 
             {/* Job details */}

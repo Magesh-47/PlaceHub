@@ -197,7 +197,7 @@ const AdminStudents = () => {
           <div className="modal-card animate-slide-down" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h3 className="modal-title">Reset Password — {resetPw.username}</h3>
-              <button className="modal-close" onClick={() => setResetPw({ ...resetPw, isOpen: false })}>×</button>
+              <button className="modal-close" onClick={() => setResetPw({ ...resetPw, isOpen: false })} aria-label="Close">×</button>
             </div>
             <div className="form-group">
               <label className="form-label">New Password</label>
@@ -307,17 +307,18 @@ const AdminStudents = () => {
                   <td style={{ color: 'var(--text-muted)' }}>{s.dateOfBirth || '—'}</td>
                   <td>
                     <div className="td-actions" style={{ justifyContent: 'center' }}>
-                      <button className="icon-btn" onClick={() => openModal(s)} title="Edit Student">
+                      <button className="icon-btn" onClick={() => openModal(s)} title="Edit Student" aria-label="Edit Student">
                         <FaEdit size={14} />
                       </button>
                       <button
                         className="icon-btn warning"
                         onClick={() => setResetPw({ isOpen: true, studentId: s.userId, username: s.username, newPassword: '' })}
                         title="Reset Password"
+                        aria-label="Reset Password"
                       >
                         <FaKey size={13} />
                       </button>
-                      <button className="icon-btn danger" onClick={() => handleDelete(s.userId)} title="Delete">
+                      <button className="icon-btn danger" onClick={() => handleDelete(s.userId)} title="Delete" aria-label="Delete Student">
                         <FaTrash size={13} />
                       </button>
                     </div>
@@ -348,7 +349,7 @@ const AdminStudents = () => {
           <div className="modal-card modal-card-lg animate-slide-down" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h3 className="modal-title">{currentStudent ? 'Edit Student' : 'Add New Student'}</h3>
-              <button className="modal-close" onClick={() => setShowModal(false)}>×</button>
+              <button className="modal-close" onClick={() => setShowModal(false)} aria-label="Close">×</button>
             </div>
 
             <form onSubmit={handleSubmit}>

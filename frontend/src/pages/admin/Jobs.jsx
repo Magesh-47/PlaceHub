@@ -172,10 +172,10 @@ const AdminJobs = () => {
                   </td>
                   <td>
                     <div className="td-actions" style={{ justifyContent: 'center' }}>
-                      <button className="icon-btn" onClick={() => openModal(job)} title="Edit Job">
+                      <button className="icon-btn" onClick={() => openModal(job)} title="Edit Job" aria-label="Edit Job">
                         <FaEdit size={14} />
                       </button>
-                      <button className="icon-btn danger" onClick={() => handleDelete(job.id)} title="Delete Job">
+                      <button className="icon-btn danger" onClick={() => handleDelete(job.id)} title="Delete Job" aria-label="Delete Job">
                         <FaTrash size={13} />
                       </button>
                     </div>
@@ -202,7 +202,7 @@ const AdminJobs = () => {
           <div className="modal-card modal-card-xl animate-slide-down" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h3 className="modal-title">{currentJobId ? 'Edit Job' : 'Post New Job'}</h3>
-              <button className="modal-close" onClick={() => setShowModal(false)}>×</button>
+              <button className="modal-close" onClick={() => setShowModal(false)} aria-label="Close">×</button>
             </div>
 
             <form onSubmit={handleSubmit}>
@@ -279,7 +279,7 @@ const AdminJobs = () => {
                       <input type="checkbox" checked={cf.isRequired} onChange={(e) => updateField(i, 'isRequired', e.target.checked)} />
                       Required
                     </label>
-                    <button type="button" className="icon-btn danger" onClick={() => removeField(i)} title="Remove field">
+                    <button type="button" className="icon-btn danger" onClick={() => removeField(i)} title="Remove field" aria-label="Remove field">
                       <FiX size={14} />
                     </button>
                   </div>

@@ -189,6 +189,7 @@ const Layout = () => {
                 onClick={toggleTheme}
                 className="icon-btn"
                 title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+                aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
               >
                 {theme === 'dark' ? <MdLightMode size={18} /> : <MdDarkMode size={18} />}
               </button>
@@ -198,6 +199,7 @@ const Layout = () => {
                 onClick={() => setShowPwModal(true)}
                 className="icon-btn"
                 title="Change Password"
+                aria-label="Change Password"
               >
                 <FiKey size={16} />
               </button>
@@ -223,7 +225,7 @@ const Layout = () => {
           <div className="modal-card animate-slide-down" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h3 className="modal-title">Change Password</h3>
-              <button className="modal-close" onClick={closePwModal}>×</button>
+              <button className="modal-close" onClick={closePwModal} aria-label="Close">×</button>
             </div>
 
             <form onSubmit={handleChangePassword}>

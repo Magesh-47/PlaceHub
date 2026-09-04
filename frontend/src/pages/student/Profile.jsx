@@ -83,6 +83,7 @@ const EducationSection = ({ education, onSave }) => {
                 className="icon-btn danger"
                 style={{ position: 'absolute', top: '0.5rem', right: '0.5rem' }}
                 title="Remove entry"
+                aria-label="Remove entry"
               >
                 <FiTrash2 size={14} />
               </button>
@@ -200,6 +201,7 @@ const ExperienceSection = ({ experience, onSave }) => {
                 className="icon-btn danger"
                 style={{ position: 'absolute', top: '0.5rem', right: '0.5rem' }}
                 title="Remove entry"
+                aria-label="Remove entry"
               >
                 <FiTrash2 size={14} />
               </button>
@@ -418,6 +420,7 @@ const CertificationSection = ({ certifications, onSave }) => {
                 className="icon-btn danger"
                 style={{ position: 'absolute', top: '0.5rem', right: '0.5rem' }}
                 title="Remove entry"
+                aria-label="Remove entry"
               >
                 <FiTrash2 size={14} />
               </button>
@@ -558,6 +561,7 @@ const LinksSection = ({ links, onSave }) => {
                 onClick={() => removeEntry(i)}
                 className="icon-btn danger"
                 title="Remove link"
+                aria-label="Remove link"
               >
                 <FiTrash2 size={14} />
               </button>
