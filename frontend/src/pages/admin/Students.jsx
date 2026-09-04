@@ -349,7 +349,7 @@ const AdminStudents = () => {
                 <div className="form-group">
                   <label className="form-label">Username</label>
                   <input type="text" className="form-control" name="username" value={formData.username}
-                    onChange={(e) => setFormData({ ...formData, username: e.target.value })} required />
+                    onChange={(e) => setFormData({ ...formData, username: e.target.value })} required autoFocus />
                 </div>
                 <div className="form-group">
                   <label className="form-label">

@@ -209,7 +209,7 @@ const AdminJobs = () => {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 1rem' }}>
                 <div className="form-group">
                   <label className="form-label">Company Name</label>
-                  <input type="text" className="form-control" name="companyName" value={formData.companyName} onChange={handleInput} required />
+                  <input type="text" className="form-control" name="companyName" value={formData.companyName} onChange={handleInput} required autoFocus />
                 </div>
                 <div className="form-group">
                   <label className="form-label">Job Role</label>
