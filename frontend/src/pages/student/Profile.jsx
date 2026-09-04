@@ -8,9 +8,11 @@ import { FaUser, FaGithub, FaLinkedin, FaGlobe, FaLink } from 'react-icons/fa';
 import { avatarGradientFor, badgeColorFor } from '../../utils/colors';
 import { useTheme } from '../../context/ThemeContext';
 
-const Field = ({ label, children }) => (
+const Field = ({ label, required, children }) => (
   <div className="form-group">
-    <label className="form-label">{label}</label>
+    <label className="form-label">
+      {label}{required && <span style={{ color: 'var(--danger)' }}> *</span>}
+    </label>
     {children}
   </div>
 );
@@ -852,7 +854,7 @@ const StudentProfile = () => {
           </p>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 1rem' }}>
-            <Field label="Full Name">
+            <Field label="Full Name" required={editMode}>
               {editMode
                 ? <input className="form-control" value={formData.fullName} onChange={ch('fullName')} />
                 : <ReadOnly value={profile.fullName} />}
@@ -862,31 +864,31 @@ const StudentProfile = () => {
               <ReadOnly value={profile.username} />
             </Field>
 
-            <Field label="Email">
+            <Field label="Email" required={editMode}>
               {editMode
                 ? <input type="email" className="form-control" value={formData.email} onChange={ch('email')} />
                 : <ReadOnly value={profile.email} />}
             </Field>
 
-            <Field label="Phone">
+            <Field label="Phone" required={editMode}>
               {editMode
                 ? <input type="tel" className="form-control" value={formData.phone} onChange={ch('phone')} />
                 : <ReadOnly value={profile.phone} />}
             </Field>
 
-            <Field label="Department">
+            <Field label="Department" required={editMode}>
               {editMode
                 ? <input className="form-control" value={formData.department} onChange={ch('department')} />
                 : <ReadOnly value={profile.department} />}
             </Field>
 
-            <Field label="Year of Study">
+            <Field label="Year of Study" required={editMode}>
               {editMode
                 ? <input type="number" className="form-control" value={formData.year} min="1" max="4" onChange={ch('year')} />
                 : <ReadOnly value={profile.year ? `Year ${profile.year}` : null} />}
             </Field>
 
-            <Field label="CGPA">
+            <Field label="CGPA" required={editMode}>
               {editMode
                 ? <input type="number" step="0.01" className="form-control" value={formData.cgpa} min="0" max="10" onChange={ch('cgpa')} />
                 : (
