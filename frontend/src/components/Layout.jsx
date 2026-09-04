@@ -5,6 +5,7 @@ import { useTheme } from '../context/ThemeContext';
 import api from '../services/api';
 import { toast } from 'react-toastify';
 import Sidebar from './Sidebar';
+import CustomModal from './CustomModal';
 import { MdLightMode, MdDarkMode } from 'react-icons/md';
 import { FiLogOut, FiKey, FiMenu, FiX, FiEye, FiEyeOff } from 'react-icons/fi';
 import { avatarGradientFor } from '../utils/colors';
@@ -88,6 +89,7 @@ const Layout = () => {
   const [pwData, setPwData] = useState({ currentPassword: '', newPassword: '', otp: '' });
   const [otpSent, setOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -201,7 +203,7 @@ const Layout = () => {
               </button>
 
               {/* Logout */}
-              <button onClick={handleLogout} className="btn btn-primary btn-sm">
+              <button onClick={() => setShowLogoutConfirm(true)} className="btn btn-primary btn-sm">
                 <FiLogOut size={14} />
                 <span>Logout</span>
               </button>
@@ -302,6 +304,17 @@ const Layout = () => {
           </div>
         </div>
       )}
+
+      {/* ── Logout confirmation ── */}
+      <CustomModal
+        isOpen={showLogoutConfirm}
+        onClose={() => setShowLogoutConfirm(false)}
+        onConfirm={handleLogout}
+        title="Log out?"
+        message="You'll need to sign in again to access your account."
+        type="confirm"
+        confirmText="Logout"
+      />
     </div>
   );
 };
