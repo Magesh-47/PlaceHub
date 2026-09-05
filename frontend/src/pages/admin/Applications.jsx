@@ -15,6 +15,7 @@ const AdminApplications = () => {
   const [loading, setLoading] = useState(false);
   const [filterDept, setFilterDept] = useState('');
   const [updatingId, setUpdatingId] = useState(null);
+  const [exporting, setExporting] = useState('');
 
   /* ── Fetch jobs ─────────────────────────────── */
   useEffect(() => {
@@ -67,8 +68,9 @@ const AdminApplications = () => {
     setUpdatingId(null);
   };
 
-  const exportFile = async (endpoint, filename) => {
+  const exportFile = async (key, endpoint, filename) => {
     if (!selectedJobId) return;
+    setExporting(key);
     try {
       const res = await api.get(endpoint, { params: { department: filterDept || null }, responseType: 'blob' });
       const url = window.URL.createObjectURL(new Blob([res.data]));
@@ -78,6 +80,7 @@ const AdminApplications = () => {
     } catch {
       toast.error('Export failed');
     }
+    setExporting('');
   };
 
   /* ── Render ─────────────────────────────────── */
@@ -132,17 +135,17 @@ const AdminApplications = () => {
             <div style={{ display: 'flex', gap: '0.5rem' }}>
               <button
                 className="btn btn-outline btn-sm"
-                onClick={() => exportFile(`/admin/applications/export/${selectedJobId}`, `applications_job_${selectedJobId}.csv`)}
-                disabled={applications.length === 0}
+                onClick={() => exportFile('csv', `/admin/applications/export/${selectedJobId}`, `applications_job_${selectedJobId}.csv`)}
+                disabled={applications.length === 0 || exporting !== ''}
               >
-                <FaDownload size={12} /> Export CSV
+                <FaDownload size={12} /> {exporting === 'csv' ? 'Preparing…' : 'Export CSV'}
               </button>
               <button
                 className="btn btn-primary btn-sm"
-                onClick={() => exportFile(`/admin/applications/export-zip/${selectedJobId}`, `resumes_job_${selectedJobId}.zip`)}
-                disabled={applications.length === 0}
+                onClick={() => exportFile('zip', `/admin/applications/export-zip/${selectedJobId}`, `resumes_job_${selectedJobId}.zip`)}
+                disabled={applications.length === 0 || exporting !== ''}
               >
-                <FaDownload size={12} /> Export ZIP
+                <FaDownload size={12} /> {exporting === 'zip' ? 'Preparing…' : 'Export ZIP'}
               </button>
             </div>
           </div>
