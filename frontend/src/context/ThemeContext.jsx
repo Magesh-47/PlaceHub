@@ -3,11 +3,16 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
-    // read stored theme or default to light
+    // an explicit prior choice always wins; otherwise fall back to the OS preference
     const [theme, setTheme] = useState(() => {
         try {
             const stored = localStorage.getItem('theme');
-            return stored === 'dark' ? 'dark' : 'light';
+            if (stored === 'dark' || stored === 'light') return stored;
+        } catch {
+            // localStorage unavailable — fall through to OS preference
+        }
+        try {
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         } catch {
             return 'light';
         }
