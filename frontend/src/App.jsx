@@ -14,6 +14,7 @@ import StudentProfile from './pages/student/Profile';
 import StudentApplications from './pages/student/Applications';
 import NotFound from './pages/NotFound';
 import ScrollToTop from './components/ScrollToTop';
+import PreventNumberInputScroll from './components/PreventNumberInputScroll';
 import { ProtectedRoute } from './components/Layout';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ToastContainer, Bounce } from 'react-toastify';
@@ -34,6 +35,7 @@ function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
+      <PreventNumberInputScroll />
       <ThemeProvider>
         <AuthProvider>
           <ErrorBoundary>
