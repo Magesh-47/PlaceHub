@@ -24,6 +24,7 @@ const AdminJobs = () => {
   const [formData, setFormData] = useState(EMPTY_FORM);
 
   const [confirm, setConfirm] = useState({ isOpen: false, message: '', onConfirm: null });
+  const [submitting, setSubmitting] = useState(false);
 
   /* ── Fetch ───────────────────────────────────── */
   const fetchJobs = async (pg = page) => {
@@ -69,6 +70,7 @@ const AdminJobs = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
     try {
       if (currentJobId) {
         await api.put(`/admin/jobs/${currentJobId}`, formData);
@@ -82,6 +84,7 @@ const AdminJobs = () => {
     } catch (err) {
       toast.error('Failed: ' + (err.response?.data?.message || 'Unknown error'));
     }
+    setSubmitting(false);
   };
 
   const handleDelete = (id) => {
@@ -237,7 +240,15 @@ const AdminJobs = () => {
                 </div>
                 <div className="form-group">
                   <label className="form-label">Application Deadline</label>
-                  <input type="date" className="form-control" name="applicationDeadline" value={formData.applicationDeadline} onChange={handleInput} required />
+                  <input
+                    type="date"
+                    className="form-control"
+                    name="applicationDeadline"
+                    value={formData.applicationDeadline}
+                    onChange={handleInput}
+                    required
+                    min={currentJobId ? undefined : new Date().toISOString().split('T')[0]}
+                  />
                 </div>
               </div>
 
@@ -287,8 +298,8 @@ const AdminJobs = () => {
               </div>
 
               <div style={{ display: 'flex', gap: '0.75rem' }}>
-                <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>
-                  {currentJobId ? 'Update Job' : 'Post Job'}
+                <button type="submit" className="btn btn-primary" style={{ flex: 1 }} disabled={submitting}>
+                  {submitting ? 'Saving…' : (currentJobId ? 'Update Job' : 'Post Job')}
                 </button>
                 <button type="button" className="btn btn-outline" style={{ flex: 1 }} onClick={() => setShowModal(false)}>
                   Cancel
