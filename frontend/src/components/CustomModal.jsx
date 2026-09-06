@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 
 /**
  * CustomModal — alert / confirm dialog
- * Props: isOpen, onClose, onConfirm, title, message, type ('alert'|'confirm'), confirmText, cancelText
+ * Props: isOpen, onClose, onConfirm, title, message, type ('alert'|'confirm'), confirmText, cancelText, danger
  */
 const CustomModal = ({
   isOpen,
@@ -13,6 +13,7 @@ const CustomModal = ({
   type = 'alert',
   confirmText = 'OK',
   cancelText = 'Cancel',
+  danger = false,
 }) => {
   useEffect(() => {
     if (!isOpen) return undefined;
@@ -49,7 +50,7 @@ const CustomModal = ({
             </button>
           )}
           <button
-            className="btn btn-primary"
+            className={`btn ${danger ? 'btn-danger' : 'btn-primary'}`}
             onClick={() => { if (onConfirm) onConfirm(); onClose(); }}
             style={{ flex: 1 }}
           >

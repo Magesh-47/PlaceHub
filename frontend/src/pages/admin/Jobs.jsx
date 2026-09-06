@@ -120,6 +120,7 @@ const AdminJobs = () => {
         message={confirm.message}
         type="confirm"
         confirmText="Delete"
+        danger
         onConfirm={confirm.onConfirm}
         onClose={() => setConfirm({ ...confirm, isOpen: false })}
       />
