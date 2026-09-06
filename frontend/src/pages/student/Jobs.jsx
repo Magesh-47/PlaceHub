@@ -25,6 +25,7 @@ const StudentJobs = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
+  const [debouncedLocation, setDebouncedLocation] = useState('');
   const [sortBy, setSortBy] = useState('applicationDeadline');
 
   const [selectedJob, setSelectedJob] = useState(null);
@@ -42,6 +43,15 @@ const StudentJobs = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
+  /* ── Debounce location filter ─────────────────── */
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPage(0);
+      setDebouncedLocation(locationFilter);
+    }, 350);
+    return () => clearTimeout(timer);
+  }, [locationFilter]);
+
   /* ── Fetch ───────────────────────────────────── */
   const fetchJobs = async () => {
     setLoading(true);
@@ -53,7 +63,7 @@ const StudentJobs = () => {
         sortBy: sortField,
         direction,
         keyword: debouncedSearch || undefined,
-        location: locationFilter || undefined,
+        location: debouncedLocation || undefined,
       };
       const res = await api.get('/student/jobs', { params });
       setJobs(res.data.content);
@@ -68,7 +78,7 @@ const StudentJobs = () => {
     fetchJobs();
     const interval = setInterval(fetchJobs, 2 * 60 * 1000);
     return () => clearInterval(interval);
-  }, [page, debouncedSearch, locationFilter, sortBy]); // eslint-disable-line
+  }, [page, debouncedSearch, debouncedLocation, sortBy]); // eslint-disable-line
 
   /* ── Apply ───────────────────────────────────── */
   const openJobDetails = async (jobId) => {
@@ -110,6 +120,7 @@ const StudentJobs = () => {
     setSearchTerm('');
     setDebouncedSearch('');
     setLocationFilter('');
+    setDebouncedLocation('');
     setPage(0);
   };
 
@@ -141,7 +152,7 @@ const StudentJobs = () => {
             className="form-control"
             placeholder="e.g. Bengaluru, Remote…"
             value={locationFilter}
-            onChange={(e) => { setPage(0); setLocationFilter(e.target.value); }}
+            onChange={(e) => setLocationFilter(e.target.value)}
           />
         </div>
         <div style={{ minWidth: 200 }}>
