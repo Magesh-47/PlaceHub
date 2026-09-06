@@ -3,6 +3,7 @@ import api from '../../services/api';
 import { FaPlus, FaEdit, FaTrash, FaSearch, FaKey, FaUserGraduate } from 'react-icons/fa';
 import { FiX } from 'react-icons/fi';
 import CustomModal from '../../components/CustomModal';
+import PasswordInput from '../../components/PasswordInput';
 import PageHeader from '../../components/PageHeader';
 import EmptyState from '../../components/EmptyState';
 import { TableSkeleton } from '../../components/Loader';
@@ -202,9 +203,7 @@ const AdminStudents = () => {
             </div>
             <div className="form-group">
               <label className="form-label">New Password</label>
-              <input
-                type="password"
-                className="form-control"
+              <PasswordInput
                 value={resetPw.newPassword}
                 onChange={(e) => setResetPw({ ...resetPw, newPassword: e.target.value })}
                 autoFocus
@@ -364,7 +363,7 @@ const AdminStudents = () => {
                   <label className="form-label">
                     Password {currentStudent && <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>(leave blank to keep current)</span>}
                   </label>
-                  <input type="password" className="form-control" name="password" value={formData.password}
+                  <PasswordInput name="password" value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })} required={!currentStudent} />
                 </div>
                 <div className="form-group">
