@@ -165,8 +165,12 @@ const AdminStudents = () => {
     });
   };
 
-  const handleResetPassword = async () => {
-    if (!resetPw.newPassword) return;
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    if (!resetPw.newPassword) {
+      toast.warning('Enter a new password first');
+      return;
+    }
     setSubmitting(true);
     try {
       await api.put(`/admin/students/${resetPw.studentId}/reset-password`, { newPassword: resetPw.newPassword });
@@ -201,23 +205,26 @@ const AdminStudents = () => {
               <h3 className="modal-title">Reset Password — {resetPw.username}</h3>
               <button className="modal-close" onClick={() => setResetPw({ ...resetPw, isOpen: false })} aria-label="Close">×</button>
             </div>
-            <div className="form-group">
-              <label className="form-label">New Password</label>
-              <PasswordInput
-                value={resetPw.newPassword}
-                onChange={(e) => setResetPw({ ...resetPw, newPassword: e.target.value })}
-                autoFocus
-                placeholder="Enter new password"
-              />
-            </div>
-            <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.25rem' }}>
-              <button className="btn btn-primary" style={{ flex: 1 }} onClick={handleResetPassword} disabled={submitting}>
-                {submitting ? 'Resetting…' : 'Reset Password'}
-              </button>
-              <button className="btn btn-outline" style={{ flex: 1 }} onClick={() => setResetPw({ ...resetPw, isOpen: false })}>
-                Cancel
-              </button>
-            </div>
+            <form onSubmit={handleResetPassword}>
+              <div className="form-group">
+                <label className="form-label">New Password</label>
+                <PasswordInput
+                  value={resetPw.newPassword}
+                  onChange={(e) => setResetPw({ ...resetPw, newPassword: e.target.value })}
+                  autoFocus
+                  required
+                  placeholder="Enter new password"
+                />
+              </div>
+              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.25rem' }}>
+                <button type="submit" className="btn btn-primary" style={{ flex: 1 }} disabled={submitting}>
+                  {submitting ? 'Resetting…' : 'Reset Password'}
+                </button>
+                <button type="button" className="btn btn-outline" style={{ flex: 1 }} onClick={() => setResetPw({ ...resetPw, isOpen: false })}>
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
