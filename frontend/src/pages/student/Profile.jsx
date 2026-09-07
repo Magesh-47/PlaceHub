@@ -331,6 +331,7 @@ const SkillsSection = ({ skills, onSave }) => {
                   onClick={() => removeSkill(skill)}
                   style={{ background: 'none', border: 'none', padding: 0, marginLeft: '0.25rem', cursor: 'pointer', display: 'inline-flex', color: 'inherit' }}
                   title={`Remove ${skill}`}
+                  aria-label={`Remove ${skill}`}
                 >
                   <FiX size={11} />
                 </button>
