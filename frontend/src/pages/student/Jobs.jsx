@@ -6,9 +6,10 @@ import { FaMapMarkerAlt, FaMoneyBillWave, FaCalendarAlt, FaBriefcase } from 'rea
 import PageHeader from '../../components/PageHeader';
 import EmptyState from '../../components/EmptyState';
 import Loader from '../../components/Loader';
+import { daysUntil } from '../../utils/dates';
 
 const deadlineBadge = (dl) => {
-  const days = Math.floor((new Date(dl) - new Date()) / 86400000);
+  const days = daysUntil(dl);
   if (days < 0) return <span className="badge badge-danger">Closed</span>;
   if (days <= 3) return <span className="badge badge-warning">{days}d left</span>;
   if (days <= 7) return <span className="badge badge-info">{days}d left</span>;
