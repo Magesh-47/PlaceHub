@@ -190,7 +190,7 @@ const StudentJobs = () => {
           }}
         >
           {jobs.map((job) => {
-            const days = Math.floor((new Date(job.applicationDeadline) - new Date()) / 86400000);
+            const days = daysUntil(job.applicationDeadline);
             return (
               <div
                 key={job.id}
