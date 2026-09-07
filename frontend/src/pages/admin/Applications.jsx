@@ -195,7 +195,7 @@ const AdminApplications = () => {
                           <div style={{ display: 'flex', gap: '0.375rem' }}>
                             <button
                               className="btn btn-outline btn-sm"
-                              style={{ color: 'var(--success-color, #16a34a)', borderColor: 'var(--success-color, #16a34a)' }}
+                              style={{ color: 'var(--success)', borderColor: 'var(--success)' }}
                               disabled={updatingId === app.applicationId || app.applicationStatus === 'ACCEPTED'}
                               onClick={() => handleStatusUpdate(app.applicationId, 'ACCEPTED')}
                               title="Accept application"
@@ -204,7 +204,7 @@ const AdminApplications = () => {
                             </button>
                             <button
                               className="btn btn-outline btn-sm"
-                              style={{ color: 'var(--danger-color, #dc2626)', borderColor: 'var(--danger-color, #dc2626)' }}
+                              style={{ color: 'var(--danger)', borderColor: 'var(--danger)' }}
                               disabled={updatingId === app.applicationId || app.applicationStatus === 'REJECTED'}
                               onClick={() => handleStatusUpdate(app.applicationId, 'REJECTED')}
                               title="Reject application"
