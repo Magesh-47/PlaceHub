@@ -7,7 +7,7 @@ import CustomModal from '../../components/CustomModal';
 import PageHeader from '../../components/PageHeader';
 import EmptyState from '../../components/EmptyState';
 import { TableSkeleton } from '../../components/Loader';
-import { daysUntil } from '../../utils/dates';
+import { daysUntil, todayLocalISO } from '../../utils/dates';
 
 const EMPTY_FORM = {
   companyName: '', jobRole: '', description: '', eligibilityCriteria: '',
@@ -249,7 +249,7 @@ const AdminJobs = () => {
                     value={formData.applicationDeadline}
                     onChange={handleInput}
                     required
-                    min={currentJobId ? undefined : new Date().toISOString().split('T')[0]}
+                    min={currentJobId ? undefined : todayLocalISO()}
                   />
                 </div>
               </div>

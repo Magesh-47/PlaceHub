@@ -1,3 +1,11 @@
+// today's date as YYYY-MM-DD in the viewer's local timezone — NOT
+// toISOString(), which converts to UTC first and can yield "yesterday"
+// for timezones ahead of UTC (e.g. IST) between midnight and the offset
+export const todayLocalISO = () => {
+  const now = new Date();
+  return new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+};
+
 // whole days from today until an ISO date (negative = already past)
 export const daysUntil = (iso) => {
   if (!iso) return null;
