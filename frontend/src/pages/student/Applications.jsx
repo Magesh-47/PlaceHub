@@ -69,7 +69,7 @@ const StudentApplications = () => {
             </thead>
             <tbody>
               {applications.map((app) => (
-                <tr key={app.id}>
+                <tr key={app.applicationId}>
                   <td style={{ fontWeight: 600 }}>{app.companyName}</td>
                   <td>{app.jobRole}</td>
                   <td>
