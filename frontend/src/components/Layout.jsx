@@ -10,6 +10,7 @@ import PasswordInput from './PasswordInput';
 import { MdLightMode, MdDarkMode } from 'react-icons/md';
 import { FiLogOut, FiKey, FiMenu, FiX } from 'react-icons/fi';
 import { avatarGradientFor } from '../utils/colors';
+import { useEscapeKey } from '../hooks/useEscapeKey';
 
 /* ─── Layout ─────────────────────────────────────────────── */
 const Layout = () => {
@@ -41,12 +42,7 @@ const Layout = () => {
   }, [collapsed]);
 
   // Escape closes the mobile drawer
-  useEffect(() => {
-    if (!sidebarOpen) return;
-    const onKey = (e) => { if (e.key === 'Escape') setSidebarOpen(false); };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [sidebarOpen]);
+  useEscapeKey(sidebarOpen, () => setSidebarOpen(false));
 
   // one button, two jobs: drawer on mobile, collapse on desktop
   const toggleMenu = useCallback(() => {
@@ -101,6 +97,8 @@ const Layout = () => {
     setPwData({ currentPassword: '', newPassword: '', otp: '' });
     setOtpSent(false);
   };
+
+  useEscapeKey(showPwModal, closePwModal);
 
   return (
     <div className="app-shell">

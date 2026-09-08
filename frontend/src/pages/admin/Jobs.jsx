@@ -8,6 +8,7 @@ import PageHeader from '../../components/PageHeader';
 import EmptyState from '../../components/EmptyState';
 import { TableSkeleton } from '../../components/Loader';
 import { daysUntil, todayLocalISO } from '../../utils/dates';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 
 const EMPTY_FORM = {
   companyName: '', jobRole: '', description: '', eligibilityCriteria: '',
@@ -111,6 +112,8 @@ const AdminJobs = () => {
     if (days <= 3) return <span className="badge badge-warning">{days}d left</span>;
     return <span className="badge badge-success">{days}d left</span>;
   };
+
+  useEscapeKey(showModal, () => setShowModal(false));
 
   /* ── Render ──────────────────────────────────── */
   return (

@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import { useEscapeKey } from '../hooks/useEscapeKey';
 
 /**
  * CustomModal — alert / confirm dialog
@@ -15,12 +16,7 @@ const CustomModal = ({
   cancelText = 'Cancel',
   danger = false,
 }) => {
-  useEffect(() => {
-    if (!isOpen) return undefined;
-    const onKeyDown = (e) => { if (e.key === 'Escape') onClose(); };
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [isOpen, onClose]);
+  useEscapeKey(isOpen, onClose);
 
   if (!isOpen) return null;
 

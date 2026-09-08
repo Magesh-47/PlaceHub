@@ -7,6 +7,7 @@ import PageHeader from '../../components/PageHeader';
 import EmptyState from '../../components/EmptyState';
 import Loader from '../../components/Loader';
 import { daysUntil } from '../../utils/dates';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 
 const deadlineBadge = (dl) => {
   const days = daysUntil(dl);
@@ -124,6 +125,8 @@ const StudentJobs = () => {
     setDebouncedLocation('');
     setPage(0);
   };
+
+  useEscapeKey(showModal, () => setShowModal(false));
 
   /* ── Render ──────────────────────────────────── */
   return (

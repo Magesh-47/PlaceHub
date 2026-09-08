@@ -10,6 +10,7 @@ import { TableSkeleton } from '../../components/Loader';
 import { toast } from 'react-toastify';
 import { avatarGradientFor, badgeColorFor } from '../../utils/colors';
 import { useTheme } from '../../context/ThemeContext';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 
 const EMPTY_FORM = {
   username: '', password: '', fullName: '', email: '',
@@ -181,6 +182,9 @@ const AdminStudents = () => {
     }
     setSubmitting(false);
   };
+
+  useEscapeKey(showModal, () => setShowModal(false));
+  useEscapeKey(resetPw.isOpen, () => setResetPw({ ...resetPw, isOpen: false }));
 
   /* ── Render ───────────────────────────────────────── */
   return (
