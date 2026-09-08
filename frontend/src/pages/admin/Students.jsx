@@ -362,44 +362,45 @@ const AdminStudents = () => {
             <form onSubmit={handleSubmit}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 1rem' }}>
                 <div className="form-group">
-                  <label className="form-label">Username</label>
+                  <label className="form-label">Username <span style={{ color: 'var(--danger)' }}>*</span></label>
                   <input type="text" className="form-control" name="username" value={formData.username}
                     onChange={(e) => setFormData({ ...formData, username: e.target.value })} required autoFocus />
                 </div>
                 <div className="form-group">
                   <label className="form-label">
-                    Password {currentStudent && <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>(leave blank to keep current)</span>}
+                    Password {!currentStudent && <span style={{ color: 'var(--danger)' }}>*</span>}{' '}
+                    {currentStudent && <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>(leave blank to keep current)</span>}
                   </label>
                   <PasswordInput name="password" value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })} required={!currentStudent} />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Full Name</label>
+                  <label className="form-label">Full Name <span style={{ color: 'var(--danger)' }}>*</span></label>
                   <input type="text" className="form-control" value={formData.fullName}
                     onChange={(e) => setFormData({ ...formData, fullName: e.target.value })} required />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Email</label>
+                  <label className="form-label">Email <span style={{ color: 'var(--danger)' }}>*</span></label>
                   <input type="email" className="form-control" value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })} required />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Department</label>
+                  <label className="form-label">Department <span style={{ color: 'var(--danger)' }}>*</span></label>
                   <input type="text" className="form-control" value={formData.department}
                     onChange={(e) => setFormData({ ...formData, department: e.target.value })} required />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Year</label>
+                  <label className="form-label">Year <span style={{ color: 'var(--danger)' }}>*</span></label>
                   <input type="number" className="form-control" value={formData.year} min="1" max="4"
                     onChange={(e) => setFormData({ ...formData, year: e.target.value })} required />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Phone</label>
+                  <label className="form-label">Phone <span style={{ color: 'var(--danger)' }}>*</span></label>
                   <input type="text" className="form-control" value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })} required />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">CGPA</label>
+                  <label className="form-label">CGPA <span style={{ color: 'var(--danger)' }}>*</span></label>
                   <input type="number" step="0.01" className="form-control" value={formData.cgpa} min="0" max="10"
                     onChange={(e) => setFormData({ ...formData, cgpa: e.target.value })} required />
                 </div>

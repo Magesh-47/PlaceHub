@@ -213,35 +213,35 @@ const AdminJobs = () => {
             <form onSubmit={handleSubmit}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 1rem' }}>
                 <div className="form-group">
-                  <label className="form-label">Company Name</label>
+                  <label className="form-label">Company Name <span style={{ color: 'var(--danger)' }}>*</span></label>
                   <input type="text" className="form-control" name="companyName" value={formData.companyName} onChange={handleInput} required autoFocus />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Job Role</label>
+                  <label className="form-label">Job Role <span style={{ color: 'var(--danger)' }}>*</span></label>
                   <input type="text" className="form-control" name="jobRole" value={formData.jobRole} onChange={handleInput} required />
                 </div>
               </div>
 
               <div className="form-group">
-                <label className="form-label">Description</label>
+                <label className="form-label">Description <span style={{ color: 'var(--danger)' }}>*</span></label>
                 <textarea className="form-control" name="description" value={formData.description} onChange={handleInput} required rows={3} />
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 1rem' }}>
                 <div className="form-group">
-                  <label className="form-label">Eligibility Criteria</label>
+                  <label className="form-label">Eligibility Criteria <span style={{ color: 'var(--danger)' }}>*</span></label>
                   <input type="text" className="form-control" name="eligibilityCriteria" value={formData.eligibilityCriteria} onChange={handleInput} required />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Location</label>
+                  <label className="form-label">Location <span style={{ color: 'var(--danger)' }}>*</span></label>
                   <input type="text" className="form-control" name="location" value={formData.location} onChange={handleInput} required />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Salary Package</label>
+                  <label className="form-label">Salary Package <span style={{ color: 'var(--danger)' }}>*</span></label>
                   <input type="text" className="form-control" name="salaryPackage" value={formData.salaryPackage} onChange={handleInput} required />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Application Deadline</label>
+                  <label className="form-label">Application Deadline <span style={{ color: 'var(--danger)' }}>*</span></label>
                   <input
                     type="date"
                     className="form-control"
