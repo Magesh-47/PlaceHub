@@ -2,8 +2,6 @@
    Responsive
    ───────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .login-brand { display: none; }
-
   .sidebar {
     position: fixed;
     left: 0;
